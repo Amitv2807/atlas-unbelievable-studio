@@ -63,9 +63,16 @@ for pat, t0, t1, tag, cap, sub, o in BEATS:
         if not os.path.exists(dst):
             subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", os.path.join(MD, f), "-vf", "scale='min(2400,iw)':-2", "-q:v", "3", dst], check=True)
         used[mid] = f
-    c = CR.get(f, {}); auth = re.sub(r"\s+", " ", c.get("author", ""))[:60]
+    c = CR.get(f, {}); auth = c.get("author", "").strip().split("\n")[0]
+    auth = re.sub(r"^This [Pp]hoto was taken by\s*", "", auth); auth = re.sub(r"^\S+\.(jpe?g|png|tiff?):\s*", "", auth, flags=re.I)
+    auth = re.sub(r"\s*derivative work.*", "", auth, flags=re.I); auth = re.sub(r"\s+", " ", auth).strip(" .")[:60]
     cr = f"{auth} · {c.get('license','')}" if c else ""
     M.append({"id": mid, "t0": t0, "t1": t1, "tag": tag, "cap": cap, "sub": sub, "cr": cr, **{k2: v for k2, v in o.items() if k2 not in ("pick", "file")}})
+LOCK = float(os.environ.get("LOCK", 0)); LF = os.environ.get("LOCKFILE")
+if LOCK and LF:  # keep beats before LOCK exactly as already rendered; only add new ones after it
+    old = json.loads(open(LF).read().split("=", 1)[1].rstrip().rstrip(";"))
+    M = [m for m in old if m["t0"] < LOCK] + [m for m in M if m["t0"] >= LOCK]
+    used = {m["id"]: used.get(m["id"], "") for m in M}
 open(os.path.join(OUT, "media.js"), "w").write("window.MEDIA=" + json.dumps(M, ensure_ascii=False) + ";\n")
 imgs = " ".join(f'<img id="m_{m}" class="hr" src="assets/media/{m}.jpg" alt="">' for m in used)
 p = "engine/ep2/index.html"; s = open(p).read()
@@ -74,6 +81,6 @@ s = s.replace('<div id="logo">', f'<!--media-->{imgs}<!--/media-->\n <div id="lo
 open(p, "w").write(s)
 pj = os.path.join(OUT, "plan.json"); P = json.load(open(pj)); z = [t for t in P["SFX"].get("zoom", []) if t not in P.get("_mz", [])]
 mz = [round(m["t0"] - 0.25, 2) for m in M]; P["SFX"]["zoom"] = sorted(z + mz); P["_mz"] = mz; json.dump(P, open(pj, "w"))
-cred = sorted({f"{c['title']} — {c['author']} — {c['license']} — {c['source']}" for f in used.values() for c in [CR.get(f)] if c})
+cred = sorted({f"{c['title']} — {c['author']} — {c['license']} — {c['source']}" for c in CR.values() if re.sub(r"\W+", "", os.path.splitext(c["file"])[0])[:40] in used})
 open(os.path.join(E, "media-credits.txt"), "w").write("\n".join(cred) + "\n")
 print(len(M), "beats,", len(used), "images; missing:", missing)
