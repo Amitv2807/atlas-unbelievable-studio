@@ -1,0 +1,47 @@
+<!doctype html><html><head><meta charset="utf-8">
+<script src="/engine/ep2/assets/d3-array.min.js"></script><script src="/engine/ep2/assets/d3-geo.min.js"></script><script src="/engine/ep2/assets/geo.js"></script>
+<style>@font-face{font-family:Anton;src:url(/engine/ep2/assets/anton.woff2)}@font-face{font-family:Archivo;src:url(/engine/ep2/assets/archivo.woff2)}
+*{margin:0;box-sizing:border-box}body{background:#000}
+#t{position:relative;width:1280px;height:720px;overflow:hidden;background:#0b5c73}
+canvas{position:absolute;left:0;top:0}
+.bar{position:absolute;left:28px;right:28px;top:18px;background:#0a0a0a;border:4px solid #fff;padding:6px 0 4px;text-align:center;font:88px Anton;letter-spacing:1px;color:#fff;line-height:1;box-shadow:0 8px 0 #0008}
+.bar b{color:#ff2b2b;font-weight:400}
+.st{position:absolute;background:#ffe03a;border:5px solid #000;border-radius:10px;padding:4px 14px 6px;transform:rotate(var(--r,-3deg));box-shadow:0 6px 0 #0009;text-align:center}
+.st .a{font:54px Anton;color:#000;line-height:1}.st .b{font:16px Archivo;color:#000;background:#fff;margin-top:3px;padding:1px 6px;border-radius:3px;white-space:nowrap}
+</style></head><body><div id="t"><canvas id="c" width="1280" height="720"></canvas>
+<div class="bar">TRAPPED BY THE <b>MAP</b></div>
+<div class="st" style="left:26px;top:160px;--r:-4deg"><div class="a">NO WALLS</div><div class="b">THE OPEN EUROPEAN PLAIN</div></div>
+<div class="st" style="left:965px;top:160px;--r:3deg"><div class="a">FROZEN</div><div class="b">THE ARCTIC COAST</div></div>
+<div class="st" style="left:26px;top:540px;--r:-2deg"><div class="a">14 BORDERS</div><div class="b">EACH. TO DEFEND.</div></div>
+<div class="st" style="left:1000px;top:540px;--r:4deg"><div class="a">&lt; 3 KM</div><div class="b">CHINA'S OIL LIFELINE</div></div>
+</div>
+<script>
+const W=1280,H=720;let T,TW,TH;
+window.draw=async()=>{const im=new Image();im.src='/engine/ep2/assets/earth-gibs.jpg';await im.decode();const tc=document.createElement('canvas');TW=tc.width=im.naturalWidth;TH=tc.height=im.naturalHeight;const tx=tc.getContext('2d');tx.drawImage(im,0,0);T=tx.getImageData(0,0,TW,TH).data;
+ const ctx=document.getElementById('c').getContext('2d');const lon0=84,lat0=40,R=400,cx=640,cy=440;
+ const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#0e7f95');g.addColorStop(1,'#08485c');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ const img=ctx.getImageData(0,0,W,H),d=img.data,p0=lat0*Math.PI/180,sp=Math.sin(p0),cp=Math.cos(p0),l0=lon0*Math.PI/180;
+ for(let y=0;y<H;y++){const py=(cy-y)/R;for(let x=0;x<W;x++){const px=(x-cx)/R,r2=px*px+py*py;if(r2>=1)continue;const z=Math.sqrt(1-r2);
+  const la=Math.asin(z*sp+py*cp),lo=l0+Math.atan2(px,z*cp-py*sp);const u=Math.floor(((lo/(2*Math.PI)+.5)%1+1)%1*TW),v=Math.min(TH-1,Math.floor((.5-la/Math.PI)*TH));const k=(v*TW+u)*4,i=(y*W+x)*4;
+  let r=T[k],gg=T[k+1],b=T[k+2];const L=(r+gg+b)/3;const water=b>r*1.15&&b>gg*0.95&&L<120;
+  if(water){r=20;gg=150+L*.4;b=170+L*.3;}else{const s=1.5;r=L+(r-L)*s;gg=L+(gg-L)*s;b=L+(b-L)*s;r*=1.15;gg*=1.15;}
+  const sh=.55+.45*Math.pow(z,.5);d[i]=Math.min(255,r*sh);d[i+1]=Math.min(255,gg*sh);d[i+2]=Math.min(255,b*sh);d[i+3]=255;}}
+ ctx.putImageData(img,0,0);
+ const proj=d3.geoOrthographic().scale(R).translate([cx,cy]).rotate([-lon0,-lat0]).clipAngle(90),path=d3.geoPath(proj,ctx);
+ const F=a=>({type:'FeatureCollection',features:G.w50.filter(f=>a.includes(f.properties.a))});
+ const red=(o)=>{ctx.save();ctx.fillStyle='#e0201b';ctx.shadowColor='#000';ctx.shadowBlur=18;ctx.shadowOffsetY=8;ctx.beginPath();path(o);ctx.fill();ctx.restore();ctx.save();ctx.strokeStyle='#ffdede';ctx.lineWidth=1.4;ctx.beginPath();path(o);ctx.stroke();ctx.restore();};
+ red(F(['RUS']));red(F(['CHN']));
+ ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=1;ctx.beginPath();path({type:'FeatureCollection',features:G.w110});ctx.stroke();
+ // chain around both
+ const both=F(['RUS','CHN']);ctx.save();ctx.lineJoin='round';ctx.setLineDash([16,10]);ctx.strokeStyle='#222';ctx.lineWidth=11;ctx.beginPath();path(both);ctx.stroke();ctx.lineDashOffset=13;ctx.strokeStyle='#d9d9d9';ctx.lineWidth=6;ctx.beginPath();path(both);ctx.stroke();ctx.restore();
+ // padlock
+ const lk=proj([92,52]);ctx.save();ctx.translate(lk[0],lk[1]);ctx.shadowColor='#000';ctx.shadowBlur=20;ctx.strokeStyle='#ddd';ctx.lineWidth=16;ctx.beginPath();ctx.arc(0,-40,34,Math.PI,0);ctx.lineTo(34,-10);ctx.moveTo(-34,-40);ctx.lineTo(-34,-10);ctx.stroke();
+ ctx.fillStyle='#ffe03a';ctx.strokeStyle='#000';ctx.lineWidth=6;ctx.beginPath();ctx.roundRect(-58,-14,116,96,14);ctx.fill();ctx.stroke();ctx.fillStyle='#000';ctx.beginPath();ctx.arc(0,22,13,0,7);ctx.fill();ctx.fillRect(-6,24,12,30);ctx.restore();
+ const ring=(ll)=>{const p=proj(ll);ctx.save();ctx.strokeStyle='#ffe03a';ctx.lineWidth=7;ctx.shadowColor='#000';ctx.shadowBlur=10;ctx.beginPath();ctx.arc(p[0],p[1],26,0,7);ctx.stroke();ctx.restore();return p;};
+ const arrow=(x0,y0,x1,y1,bend)=>{ctx.save();ctx.strokeStyle='#fff';ctx.lineWidth=9;ctx.lineCap='round';ctx.shadowColor='#000';ctx.shadowBlur=12;const mx=(x0+x1)/2+bend[0],my=(y0+y1)/2+bend[1];
+  ctx.beginPath();ctx.moveTo(x0,y0);ctx.quadraticCurveTo(mx,my,x1,y1);ctx.stroke();const a=Math.atan2(y1-my,x1-mx);ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(x1+Math.cos(a)*6,y1+Math.sin(a)*6);
+  ctx.lineTo(x1-Math.cos(a-0.5)*30,y1-Math.sin(a-0.5)*30);ctx.lineTo(x1-Math.cos(a+0.5)*30,y1-Math.sin(a+0.5)*30);ctx.closePath();ctx.fill();ctx.restore();};
+ const ep=ring([30,53]),ar=ring([110,74]),bo=ring([75,40]),ml=ring([101,3]);
+ arrow(230,250,ep[0]-26,ep[1]-8,[10,-40]);arrow(1040,250,ar[0]+28,ar[1]-4,[0,-40]);arrow(260,600,bo[0]-28,bo[1]+10,[-20,40]);arrow(1040,600,ml[0]+28,ml[1]-4,[10,30]);
+ return true;};
+</script></body></html>
