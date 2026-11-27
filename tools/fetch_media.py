@@ -16,9 +16,10 @@ YTDLP = os.path.join(os.path.dirname(sys.executable), "yt-dlp")
 OK = re.compile(r"^(public domain|pd|cc0|cc[- ]by(-sa)?[- ]?\d|cc[- ]by(-sa)?$)", re.I)
 import time
 def safe(url):
+    url = url.replace("://thumb.wikimedia.org/", "://upload.wikimedia.org/")  # new thumb host is not on the allowlist; same paths work here
     u = urllib.parse.urlsplit(url); return urllib.parse.urlunsplit((u.scheme, u.netloc, urllib.parse.quote(urllib.parse.unquote(u.path)), u.query, u.fragment))
 def fetch_bytes(url, timeout=60):
-    for k in range(6):
+    for k in range(40):
         try:
             with urllib.request.urlopen(urllib.request.Request(safe(url), headers=UA), timeout=timeout) as r: data = r.read()
             time.sleep(1.0); return data
@@ -43,7 +44,7 @@ def commons(q, typ, n, out):
     for p in sorted(s.get("query", {}).get("pages", {}).values(), key=lambda x: x.get("index", 0)):
         ii = p["imageinfo"][0]; md = ii.get("extmetadata", {}); lic = strip(md.get("LicenseShortName", {}).get("value"))
         if not OK.match(lic) or re.search(r"\b(nc|nd)\b", lic, re.I): print("  skip (license):", lic, "|", p["title"]); continue
-        name = re.sub(r"[^\w.-]+", "_", p["title"][5:])[:80]; dest = os.path.join(out, name)
+        b, e = os.path.splitext(p["title"][5:]); name = re.sub(r"[^\w.-]+", "_", b)[:72] + e.lower(); dest = os.path.join(out, name)
         if typ == "image":
             url = ii.get("thumburl") or ii["url"]; open(dest, "wb").write(fetch_bytes(url))
         else:

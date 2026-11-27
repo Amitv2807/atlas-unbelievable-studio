@@ -1,10 +1,11 @@
 """Final mix: voice + ducked music bed + timed SFX from plan.json, normalised to -14 LUFS for YouTube.
-python mix_episode.py voiceover.mp3 bed.wav plan.json sfx_dir OUT.wav DURATION"""
+python mix_episode.py voiceover.mp3 bed.wav plan.json sfx_dir OUT.wav DURATION [BED_GAIN=0.55]
+BED_GAIN scales a bed normalised to about -19 LUFS; 0.55 keeps music ~10 dB under the voice (0.22 buried it)."""
 import sys, json, subprocess
-vo, bed, plan, K, out, dur = sys.argv[1:7]; X = json.load(open(plan))["SFX"]; K = K.rstrip("/") + "/"
+vo, bed, plan, K, out, dur = sys.argv[1:7]; G = float(sys.argv[7]) if len(sys.argv) > 7 else 0.55; X = json.load(open(plan))["SFX"]; K = K.rstrip("/") + "/"
 M = {"whoosh": ("whoosh-flyover.wav", 0.45), "zoom": ("whoosh-short.wav", 0.5), "tick": ("tick-counter.wav", 0.6), "title": ("title-hit.wav", 0.5), "boom": ("impact-reveal.wav", 0.7), "pop": ("pop-marker.wav", 0.8)}
 ins = ["-i", vo, "-i", bed]
-f = ["[0:a]aresample=48000,aformat=channel_layouts=stereo,apad,asplit=2[v][vsc]", "[1:a]aresample=48000,volume=0.22,apad[bed]", f"[bed][vsc]sidechaincompress=threshold=0.03:ratio=6:attack=20:release=400,atrim=0:{dur}[m]"]
+f = ["[0:a]aresample=48000,aformat=channel_layouts=stereo,apad,asplit=2[v][vsc]", f"[1:a]aresample=48000,volume={G},apad[bed]", f"[bed][vsc]sidechaincompress=threshold=0.05:ratio=3:attack=30:release=600,atrim=0:{dur}[m]"]
 lab = []; k = 2
 for name, times in X.items():
     src, vol = M[name]
