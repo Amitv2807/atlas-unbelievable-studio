@@ -10,3 +10,5 @@ ext/
 work/
 .DS_Store
 .atlas_contact
+*.wav
+!sfx/*.wav

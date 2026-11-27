@@ -1,8 +1,9 @@
 const {chromium}=require('playwright');(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1920,height:1080}});
 await p.goto('http://127.0.0.1:8765/index.html');await p.waitForFunction(()=>document.getElementById('tex').complete);await p.evaluate(()=>document.fonts.ready);
+if(process.argv[2])await p.evaluate(r=>{const [a,b]=r.split(',').map(Number);window.__T0=a;window.__T1=b;},process.argv[2]);
 const res=await p.evaluate(()=>{window.__noSat=true;const out=[];const ov=(a,b,m=4)=>a.x<b.x+b.w-m&&b.x<a.x+a.w-m&&a.y<b.y+b.h-m&&b.y<a.y+a.h-m;const inside=(a,b)=>a.x>=b.x-2&&a.y>=b.y-2&&a.x+a.w<=b.x+b.w+2&&a.y+a.h<=b.y+b.h+2;
- const html=id=>{const e=document.getElementById(id);if(+getComputedStyle(e).opacity<0.5)return null;const r=(id==='fact'||id==='logo'||id==='count')?e.getBoundingClientRect():null;return r?{k:'html',t:id,x:r.x,y:r.y,w:r.width,h:r.height}:null;};
- for(let t=0;t<=638.2;t+=0.2){window.__render(t);const full=['chap','title'].some(id=>+document.getElementById(id).style.opacity>0.3);if(full)continue;
+ const html=id=>{const e=document.getElementById(id);if(!e||+getComputedStyle(e).opacity<0.5)return null;const r=(id==='fact'||id==='logo'||id==='count')?e.getBoundingClientRect():null;return r?{k:'html',t:id,x:r.x,y:r.y,w:r.width,h:r.height}:null;};
+ const DUR=window.__DUR||638.2,T0=window.__T0||0,T1=window.__T1||DUR;for(let t=T0;t<=T1;t+=0.2){window.__render(t);const full=['chap','title','sub'].some(id=>{const e=document.getElementById(id);return e&&+e.style.opacity>0.3});if(full)continue;
   const B=window.__boxes.slice();const H=['fact','logo','count'].map(html).filter(Boolean);const panels=B.filter(x=>x.k==='panel'),T=B.filter(x=>x.k!=='panel');
   for(const a of T){const inP=panels.some(pn=>inside(a,pn));
    if(a.x<8||a.y<8||a.x+a.w>1912||a.y+a.h>1072)out.push([+t.toFixed(1),'OFF-FRAME',a.t]);
