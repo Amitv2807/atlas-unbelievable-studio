@@ -14,5 +14,3 @@ work/
 !sfx/*.wav
 look/
 episodes/*/media/*
-!episodes/*/media/credits.json
-!episodes/*/media/CREDITS.txt
