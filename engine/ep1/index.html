@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>25 Geography Facts</title>
+<script src="assets/gsap.min.js"></script>
+<script src="assets/d3-array.min.js"></script>
+<script src="assets/d3-geo.min.js"></script>
+<script src="assets/geo.js"></script>
+<script src="assets/plan.js"></script>
+<style>
+@font-face{font-family:Anton;src:url(assets/anton.woff2)}
+@font-face{font-family:Archivo;src:url(assets/archivo.woff2)}
+*{box-sizing:border-box}
+html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#02040a;color:#fff;font-family:Archivo,Arial,sans-serif}
+#root{position:relative;width:1920px;height:1080px;overflow:hidden;background:#02040a}
+#cv{position:absolute;inset:0}
+#tex{position:absolute;width:1px;height:1px;opacity:0}
+.fontwarm{position:absolute;left:-9999px;top:0}
+#logo{position:absolute;right:42px;top:34px;display:flex;align-items:center;gap:14px;opacity:.85}
+#logo img{width:62px;height:62px;border-radius:50%}
+#logo span{font:22px Archivo;letter-spacing:6px;text-shadow:0 2px 10px #000}
+#fact{position:absolute;left:50px;top:36px;display:flex;align-items:center;gap:22px;opacity:0;max-width:1180px;
+ background:linear-gradient(90deg,rgba(6,12,32,.88),rgba(6,12,32,.55));border:2px solid rgba(255,210,63,.55);border-radius:22px;padding:16px 30px 16px 16px;box-shadow:0 12px 40px #000a}
+#fact .n{font:64px Anton;color:#111;background:linear-gradient(#ffe066,#ff9500);border-radius:16px;padding:4px 18px;min-width:110px;text-align:center}
+#fact .h{font:44px Anton;letter-spacing:.5px;line-height:1.05}
+#chap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;
+ background:radial-gradient(ellipse at center,rgba(2,4,10,.55),rgba(2,4,10,.92))}
+#chap .k{font:30px Archivo;letter-spacing:18px;color:#7fd8ff;margin-left:18px}
+#chap .t{font:120px Anton;margin-top:10px;background:linear-gradient(#fff,#ffe066 55%,#ff9500);-webkit-background-clip:text;color:transparent;filter:drop-shadow(0 8px 0 #5a2200) drop-shadow(0 0 30px #000)}
+#title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0}
+#title .a{font:150px Anton;line-height:.95;background:linear-gradient(#fff,#ffe066 55%,#ff9500);-webkit-background-clip:text;color:transparent;filter:drop-shadow(0 10px 0 #5a2200) drop-shadow(0 0 40px #000)}
+#title .b{font:44px Archivo;letter-spacing:6px;margin-top:22px;text-shadow:0 4px 20px #000}
+#count{position:absolute;right:70px;top:150px;text-align:right;opacity:0}
+#count .n{font:170px Anton;line-height:1;color:#ffd23f;text-shadow:0 8px 0 #5a2200,0 0 40px #000}
+#count .t{font:34px Archivo;letter-spacing:4px;text-shadow:0 3px 14px #000}
+#sub{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0}
+#sub .btn{font:84px Anton;background:#ff2d2d;padding:14px 60px;border-radius:24px;box-shadow:0 14px 50px #000c;border:6px solid #fff}
+#sub .ch{font:40px Archivo;letter-spacing:10px;margin-top:28px;text-shadow:0 4px 20px #000}
+</style></head><body>
+<div id="root" data-composition-id="ep1" data-start="0" data-duration="638.2" data-width="1920" data-height="1080">
+ <img id="tex" src="assets/earth-blue-marble.jpg" alt="">
+ <canvas id="cv" width="1920" height="1080"></canvas>
+ <div class="fontwarm"><span style="font-family:Anton">A</span><span style="font-family:Archivo">A</span></div>
+ <div id="logo"><img src="assets/logo.png" alt=""><span>ATLAS UNBELIEVABLE</span></div>
+ <div id="fact"><div class="n">#1</div><div class="h">FACT</div></div>
+ <div id="count"><div class="n">0</div><div class="t">TIME ZONES</div></div>
+ <div id="chap"><div class="k">CHAPTER 1</div><div class="t">TITLE</div></div>
+ <div id="title"><div class="a">25 GEOGRAPHY FACTS</div><div class="a">THAT SOUND FAKE</div><div class="b">BUT ARE 100% TRUE</div></div>
+ <div id="sub"><div class="btn">SUBSCRIBE</div><div class="ch">ATLAS UNBELIEVABLE</div></div>
+</div>
+<script>
+(function(){
+const W=1920,H=1080,CX=960,CY=540,D2R=Math.PI/180,P=PLAN,B=P.B,S=P.S,C=P.C;
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),ramp=(t,a,b)=>clamp((t-a)/(b-a),0,1);
+const sine=e=>-(Math.cos(Math.PI*e)-1)/2,cub=e=>e<.5?4*e*e*e:1-Math.pow(-2*e+2,3)/2;
+const win=(t,a,b,fi,fo)=>ramp(t,a,a+(fi??0.6))*(1-ramp(t,b-(fo??0.6),b));
+function mul(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const r1=mul(7),STARS=[];for(let i=0;i<700;i++)STARS.push([r1()*W*1.6,r1()*H,r1()*1.8+0.3,r1()*0.7+0.3]);
+const r2=mul(3),MOONC=[];for(let i=0;i<14;i++)MOONC.push([r2()*1.4-0.7,r2()*1.4-0.7,r2()*0.16+0.05]);
+// ---------- data ----------
+const W50={};G.w50.forEach(f=>{(W50[f.properties.a]=W50[f.properties.a]||[]).push(f)});
+const FC=fs=>({type:'FeatureCollection',features:fs});
+const A=(...a3)=>FC(a3.flatMap(a=>W50[a]||[]));
+const R10=r=>FC(G.r10.filter(f=>f.properties.r===r));
+const R10a=(r,a)=>FC(G.r10.filter(f=>f.properties.r===r&&f.properties.a===a));
+const LAKE=n=>FC(G.lakes.filter(f=>f.properties.a===n));
+const ST=n=>FC(G.states.filter(f=>f.properties.a===n));
+const B110=FC(G.w110),L50=FC(G.w50);const R10OUT=FC(G.r10.map(f=>({type:'Feature',properties:f.properties,geometry:{type:'MultiPolygon',coordinates:f.geometry.coordinates.map(p=>[p[0]])}})));
+const CONT=c=>FC(G.w50.filter(f=>f.properties.c===c));
+const AFRICA=CONT('Africa'),SAM=CONT('South America');
+function polyFilter(fc,fn){return FC(fc.features.map(f=>({type:'Feature',properties:f.properties,geometry:{type:'MultiPolygon',coordinates:f.geometry.coordinates.filter(fn)}})).filter(f=>f.geometry.coordinates.length));}
+const avg=p=>{let x=0,y=0;p[0].forEach(c=>{x+=c[0];y+=c[1]});return[x/p[0].length,y/p[0].length]};
+const USA48=polyFilter(A('USA'),p=>{const c=avg(p);return c[0]>-128&&c[0]<-60&&c[1]<50&&c[1]>24});
+const ALASKA=polyFilter(A('USA'),p=>{const c=avg(p);return c[0]<-129||c[0]>170});
+const FRA_EU=polyFilter(A('FRA'),p=>{const c=avg(p);return c[0]>-6&&c[0]<10&&c[1]>41});
+const WEU=FC([...FRA_EU.features,...['ESP','PRT','DEU','ITA','GBR','IRL','BEL','NLD','CHE','AUT','DNK','LUX'].flatMap(a=>W50[a]||[])]);
+const TUR_EU=polyFilter(R10('istanbul'),p=>avg(p)[0]<29.1&&avg(p)[1]>40.9), TUR_AS=polyFilter(R10a('istanbul','TUR'),p=>!(avg(p)[0]<29.1&&avg(p)[1]>40.9));
+function moveFC(fc,c0,c1){const r0=d3.geoRotation([-c0[0],-c0[1]]),r1=d3.geoRotation([-c1[0],-c1[1]]);
+ const m=c=>r1.invert(r0(c));const mp=a=>typeof a[0]==='number'?m(a):a.map(mp);
+ return FC(fc.features.map(f=>({type:'Feature',properties:{},geometry:{type:f.geometry.type,coordinates:mp(f.geometry.coordinates)}})));}
+// ---------- texture ----------
+let TEX=null,TW=0,TH=0;
+function loadTex(){const im=document.getElementById('tex');if(TEX||!im.complete||!im.naturalWidth)return;
+ const c=document.createElement('canvas');TW=c.width=im.naturalWidth;TH=c.height=im.naturalHeight;const x=c.getContext('2d');x.drawImage(im,0,0);TEX=x.getImageData(0,0,TW,TH).data;}
+const OW=960,OH=540,off=document.createElement('canvas');off.width=OW;off.height=OH;const octx=off.getContext('2d');const oimg=octx.createImageData(OW,OH);
+function drawSat(c,alpha){
+ if(!TEX||alpha<=0||window.__noSat)return;const d=oimg.data,s=OW/W,R=c.R*s,cx=CX*s,cy=CY*s;
+ const p0=c.lat*D2R,sp=Math.sin(p0),cp=Math.cos(p0),l0=c.lon*D2R;
+ for(let y=0;y<OH;y++){const py=(cy-y)/R;for(let x=0;x<OW;x++){const i=(y*OW+x)*4,px=(x-cx)/R,r2=px*px+py*py;
+  if(r2>=1){d[i+3]=0;continue}const z=Math.sqrt(1-r2);
+  const lat=Math.asin(clamp(z*sp+py*cp,-1,1)),lon=l0+Math.atan2(px,z*cp-py*sp);
+  let u=((lon/(2*Math.PI)+0.5)%1+1)%1*TW-0.5,v=(0.5-lat/Math.PI)*TH-0.5;if(v<0)v=0;if(v>TH-1.001)v=TH-1.001;
+  const u0=Math.floor(u),v0=Math.floor(v),fu=u-u0,fv=v-v0,u1=(u0+1)%TW,uu=(u0+TW)%TW;
+  const a=(v0*TW+uu)*4,b=(v0*TW+u1)*4,cc=((v0+1)*TW+uu)*4,dd=((v0+1)*TW+u1)*4,sh=0.45+0.55*Math.pow(z,0.6);
+  for(let k=0;k<3;k++){d[i+k]=Math.min(255,((TEX[a+k]*(1-fu)+TEX[b+k]*fu)*(1-fv)+(TEX[cc+k]*(1-fu)+TEX[dd+k]*fu)*fv)*sh*1.12);}
+  d[i+3]=255*alpha;}}
+ octx.putImageData(oimg,0,0);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(off,0,0,W,H);}
+// ---------- camera ----------
+const K=P.K;
+function cam(t){if(t<=K[0][0])return{lon:K[0][1],lat:K[0][2],R:K[0][3]};let i=0;while(i<K.length-2&&t>K[i+1][0])i++;
+ const a=K[i],b=K[i+1],m=b[4];const e=clamp((t-a[0])/(b[0]-a[0]),0,1);const ee=m==='l'?e:(m==='f'?cub(e):sine(e));
+ let lon,lat;if(m==='l'){lon=a[1]+(b[1]-a[1])*ee;lat=a[2]+(b[2]-a[2])*ee;}else{const p=d3.geoInterpolate([a[1],a[2]],[b[1],b[2]])(ee);lon=p[0];lat=p[1];}
+ let lr=Math.log(a[3])+(Math.log(b[3])-Math.log(a[3]))*ee;
+ if(m==='f'){const mid=Math.log(620),bump=Math.max(0,(Math.log(a[3])+Math.log(b[3]))/2-mid);lr-=bump*Math.sin(Math.PI*ee);}
+ return{lon,lat,R:Math.exp(lr)};}
+// ---------- drawing helpers ----------
+let proj,path,CAM;
+function fillF(o,col,a){if(a<=0)return;ctx.save();ctx.globalAlpha=a;ctx.fillStyle=col;ctx.beginPath();path(o);ctx.fill();ctx.restore();}
+function glow(o,col,w,a){if(a<=0)return;ctx.save();ctx.globalAlpha=a;ctx.shadowColor=col;ctx.shadowBlur=22;ctx.strokeStyle=col;ctx.lineWidth=w;ctx.lineJoin='round';ctx.beginPath();path(o);ctx.stroke();ctx.restore();}
+function hl(o,col,a,fa){fillF(o,col,(fa??0.42)*a);glow(o,col,3,a);}
+function partial(c,p){if(p<=0)return null;if(p>=1)return c;const n=c.length-1,f=p*n,i=Math.floor(f),r=f-i,o=c.slice(0,i+1);if(i<n){const a=c[i],b=c[i+1];o.push([a[0]+(b[0]-a[0])*r,a[1]+(b[1]-a[1])*r]);}return o;}
+function seg(a,b,n){const o=[];for(let i=0;i<=n;i++)o.push([a[0]+(b[0]-a[0])*i/n,a[1]+(b[1]-a[1])*i/n]);return o;}
+function gline(coords,p,col,w,a,dash){const c=partial(coords,p);if(!c||a<=0)return;ctx.save();if(dash)ctx.setLineDash(dash);glow({type:'LineString',coordinates:c},col,w,a);ctx.restore();}
+const vis=ll=>d3.geoDistance(ll,[CAM.lon,CAM.lat])<1.53;
+function marker(ll,t0,t,col,a){if(t<t0||a<=0||!vis(ll))return;const p=proj(ll);if(!p)return;const k=ramp(t,t0,t0+0.5),ph=((t-t0)%1.6)/1.6;
+ ctx.save();ctx.globalAlpha=a*(1-ph)*0.8;ctx.strokeStyle=col;ctx.lineWidth=5;ctx.beginPath();ctx.arc(p[0],p[1],14+60*ph,0,7);ctx.stroke();
+ ctx.globalAlpha=a;ctx.fillStyle=col;ctx.beginPath();ctx.arc(p[0],p[1],15*(k<1?sine(k)*1.15:1),0,7);ctx.fill();ctx.lineWidth=5;ctx.strokeStyle='#fff';ctx.stroke();ctx.restore();}
+window.__boxes=[];const ZONES=[];function pill(x,y,txt,o){o=o||{};const fs=o.size||34;ctx.save();ctx.globalAlpha=o.a??1;ctx.font=`${fs}px Archivo`;const tw=ctx.measureText(txt).width,pw=tw+fs*1.1,ph=fs*1.7;
+ let x0=x-pw/2;if(o.align==='l')x0=x;if(o.align==='r')x0=x-pw;let y0=y-ph/2;if(!o.inP){x0=clamp(x0,14,W-14-pw);y0=clamp(y0,14,H-14-ph);for(const z of ZONES){if(x0<z.x+z.w&&x0+pw>z.x&&y0<z.y+z.h&&y0+ph>z.y)y0=z.y+z.h+10;}y=y0+ph/2;x=x0+pw/2;}if((o.a??1)>0.5)window.__boxes.push({k:'pill',t:txt,x:x0,y:y0,w:pw,h:ph,inP:!!o.inP});
+ ctx.fillStyle=o.bg||'rgba(4,8,24,.86)';ctx.strokeStyle=o.bd||'#ffd23f';ctx.lineWidth=3;ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=18;
+ ctx.beginPath();ctx.roundRect(x0,y0,pw,ph,ph/2);ctx.fill();ctx.shadowBlur=0;ctx.stroke();ctx.fillStyle=o.fg||'#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(txt,x0+pw/2,y0+ph/2+fs*0.06);ctx.restore();}
+function lab(ll,txt,dx,dy,a,o){if(a<=0||!vis(ll))return;const p=proj(ll);if(!p)return;pill(p[0]+(dx||0),p[1]+(dy||0),txt,Object.assign({a},o||{}));}
+function bigText(x,y,txt,size,a,col){if(a<=0)return;ctx.save();ctx.globalAlpha=a;ctx.font=`${size}px Anton`;if(a>0.5){const tw=ctx.measureText(txt).width;window.__boxes.push({k:'big',t:txt,x:x-tw/2,y:y-size*0.6,w:tw,h:size*1.2});}ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.lineJoin='round';ctx.lineWidth=size*0.16;ctx.strokeStyle='#000';ctx.strokeText(txt,x,y);ctx.fillStyle=col||'#ffd23f';ctx.fillText(txt,x,y);ctx.restore();}
+function panel(x,y,w,h,a,title){if(a<=0)return;if(a>0.5)window.__boxes.push({k:'panel',t:title||'panel',x,y,w,h});ctx.save();ctx.globalAlpha=a;ctx.fillStyle='rgba(5,10,28,.9)';ctx.strokeStyle='rgba(255,210,63,.7)';ctx.lineWidth=3;ctx.shadowColor='#000';ctx.shadowBlur=40;
+ ctx.beginPath();ctx.roundRect(x,y,w,h,26);ctx.fill();ctx.shadowBlur=0;ctx.stroke();if(title){ctx.font='26px Archivo';ctx.fillStyle='#7fd8ff';ctx.textAlign='left';ctx.fillText(title,x+30,y+46);}ctx.restore();}
+function moon(x,y,r,a){if(a<=0)return;const g=ctx.createRadialGradient(x-r*.3,y-r*.3,r*.1,x,y,r);g.addColorStop(0,'#f2f2f2');g.addColorStop(.7,'#b9b9b9');g.addColorStop(1,'#7c7c7c');
+ ctx.save();ctx.globalAlpha=a*.95;ctx.shadowColor='#000';ctx.shadowBlur=40;ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='rgba(90,90,90,.35)';
+ for(const m of MOONC){ctx.beginPath();ctx.arc(x+m[0]*r,y+m[1]*r,m[2]*r,0,7);ctx.fill();}ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.stroke();ctx.restore();}
+const kmR=km=>km/6371*CAM.R;
+// ---------- scenes ----------
+const RENO=[-119.81,39.53],LA=[-118.24,34.05];
+function scReno(t,a,t0){if(a<=0)return;hl(ST('California'),'#ffd23f',a,0.16);hl(ST('Nevada'),'#ffffff',a,0.12);
+ const pR=ramp(t,t0+1.6,t0+3.4),pL=ramp(t,t0+2.2,t0+4.0);gline(seg([RENO[0],42.2],[RENO[0],36],30),pR,'#ffd23f',6,a,[22,16]);gline(seg([LA[0],42.2],[LA[0],33.2],30),pL,'#ffffff',6,a,[22,16]);
+ marker(RENO,t0+0.4,t,'#ffd23f',a);marker(LA,t0+1.0,t,'#ff5a5a',a);lab(RENO,'RENO · 119.8°W',0,-62,a*ramp(t,t0+0.6,t0+1.2));lab(LA,'LOS ANGELES · 118.2°W',40,62,a*ramp(t,t0+1.2,t0+1.8),{bd:'#ff7a7a'});}
+function render(t){
+ window.__boxes=[];ZONES.length=0;{let f0=0;for(let i=1;i<=25;i++)if(t>=S[i])f0=i;const fe0=f0?win(t,S[f0]+.5,(f0<25?S[f0+1]:P.O)-.2,.5,.4):0;const fcE=document.getElementById('fact');if(fe0>.2)ZONES.push({x:40,y:26,w:(fcE.offsetWidth||900)+30,h:(fcE.offsetHeight||110)+24});
+ ZONES.push({x:1540,y:20,w:380,h:90});if(t>P.SPIN[0]-.4&&t<S[8])ZONES.push({x:1480,y:140,w:440,h:250});}
+ loadTex();const c=CAM=cam(t);
+ proj=d3.geoOrthographic().scale(c.R).translate([CX,CY]).rotate([-c.lon,-c.lat]).clipAngle(90).precision(0.4);path=d3.geoPath(proj,ctx);
+ ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#02040a';ctx.fillRect(0,0,W,H);
+ if(c.R<1600){const sa=1-ramp(c.R,800,1600);const sh=(c.lon*2)%(W*.6);ctx.fillStyle='#fff';
+  for(const s of STARS){const x=((s[0]-sh)%(W*1.6)+W*1.6)%(W*1.6)-W*.3;ctx.globalAlpha=s[3]*sa;ctx.fillRect(x,s[1],s[2],s[2]);}ctx.globalAlpha=1;
+  const g=ctx.createRadialGradient(CX,CY,c.R*.95,CX,CY,c.R*1.2);g.addColorStop(0,'rgba(90,170,255,.55)');g.addColorStop(1,'rgba(90,170,255,0)');ctx.fillStyle=g;ctx.globalAlpha=sa;ctx.beginPath();ctx.arc(CX,CY,c.R*1.2,0,7);ctx.fill();ctx.globalAlpha=1;}
+ const satA=1-ramp(Math.log(c.R),Math.log(9000),Math.log(30000));
+ ctx.beginPath();path({type:'Sphere'});ctx.fillStyle='#0b3a63';ctx.fill();
+ if(satA<1){fillF(L50,'#3f7a4f',1);fillF(R10OUT,'#3f7a4f',1);}
+ drawSat(c,satA);
+ if(c.R>20000){fillF(FC(G.lakes),'#1d5f9a',1);glow(FC(G.lakes),'#7fd8ff',1.5,.6);}
+ ctx.save();ctx.globalAlpha=.4*clamp(1.4-c.R/9000,.25,1);ctx.strokeStyle='#fff';ctx.lineWidth=1.4;ctx.beginPath();path(c.R>2500?L50:B110);ctx.stroke();ctx.restore();
+ const N=(i)=>i<25?S[i+1]:P.O;
+ // ===== COLD OPEN =====
+ if(t<26){scReno(t,win(t,0,B.c_russia+0.8,0.01,0.8),-1.0);
+  const a=win(t,B.c_russia+2.2,B.c_remote+0.2);if(a>0){hl(A('RUS'),'#ff4040',a,0.35);hl(A('USA'),'#3d8bff',a,0.35);lab([-174,66.8],'RUSSIA',0,0,a,{bd:'#ff7a7a'});lab([-158,64.6],'USA',0,0,a,{bd:'#7ab4ff'});}
+  const nm=[-123.4,-48.9],a2=win(t,12.2,21.4,0.6,1.0);if(a2>0){marker(nm,12.6,t,'#ffd23f',a2);gline(d3.geoCircle().center(nm).radius(24.2)().coordinates[0],ramp(t,13.2,15.6),'#7fd8ff',4,a2,[14,10]);
+   lab(nm,'POINT NEMO',0,-64,a2*ramp(t,12.8,13.4));const ph=((t-12)/9)*2*Math.PI;const ex=CX+Math.cos(ph)*c.R*1.18,ey=CY+Math.sin(ph)*c.R*.28-c.R*.05;
+   ctx.save();ctx.globalAlpha=a2*.6;ctx.strokeStyle='#7fd8ff';ctx.lineWidth=2;ctx.setLineDash([6,10]);ctx.beginPath();ctx.ellipse(CX,CY-c.R*.05,c.R*1.18,c.R*.28,0,0,7);ctx.stroke();ctx.restore();
+   ctx.save();ctx.globalAlpha=a2;ctx.fillStyle='#fff';ctx.shadowColor='#7fd8ff';ctx.shadowBlur=24;ctx.beginPath();ctx.arc(ex,ey,9,0,7);ctx.fill();ctx.restore();pill(ex,ey-40,'ISS',{a:a2*ramp(t,14,14.6),size:26,bd:'#7fd8ff'});}}
+ // ===== F1 Reno =====
+ scReno(t,win(t,S[1]+2.6,N(1)),S[1]+2.6);
+ {const a=win(t,B.f1_draw,N(1));if(a>0){gline(seg([RENO[0],36],[RENO[0],32.6],20),ramp(t,B.f1_draw+.3,B.f1_draw+2.3),'#ffd23f',6,a,[22,16]);marker([-119.70,34.42],B.f1_draw+1.6,t,'#7fd8ff',a);
+  lab([-119.70,34.42],'SANTA BARBARA',-230,-6,a*ramp(t,B.f1_draw+1.8,B.f1_draw+2.4),{bd:'#7fd8ff'});lab([-122.6,32.6],'PACIFIC OCEAN',0,0,a*ramp(t,B.f1_draw+2.4,B.f1_draw+3),{bd:'#7fd8ff',size:28});}}
+ // ===== F2 South America =====
+ {const a=win(t,S[2]+2.6,N(2));if(a>0){hl(SAM,'#ffd23f',a,0.22);const MI=[-80.19,25.76];marker(MI,S[2]+3.4,t,'#ff5a5a',a);lab(MI,'MIAMI · 80.2°W',200,0,a*ramp(t,S[2]+3.6,S[2]+4.2),{bd:'#ff7a7a'});
+  gline(seg([MI[0],25.8],[MI[0],-56],60),ramp(t,S[2]+5,S[2]+9),'#ffffff',5,a,[20,14]);
+  const LI=[-77.04,-12.05],SA=[-70.67,-33.45];marker(LI,B.f2_lima,t,'#ffd23f',a);lab(LI,'LIMA · 77.0°W',150,0,a*ramp(t,B.f2_lima+.2,B.f2_lima+.8));
+  marker(SA,B.f2_santiago,t,'#ffd23f',a);lab(SA,'SANTIAGO · 70.7°W',180,0,a*ramp(t,B.f2_santiago+.2,B.f2_santiago+.8));lab([-95,-20],'PACIFIC OCEAN',0,0,a*ramp(t,S[2]+9,S[2]+9.6),{bd:'#7fd8ff',size:28});}}
+ // ===== F3 Detroit =====
+ {const a=win(t,S[3]+2.4,N(3));if(a>0){const z=c.R>20000;hl(z?R10a('detroit','USA'):A('USA'),'#3d8bff',a,0.35);hl(z?R10a('detroit','CAN'):A('CAN'),'#ff4040',a,0.35);if(z)fillF(FC(G.lakes),'#1d5f9a',.9);
+  const DE=[-83.0458,42.3314],WI=[-83.0364,42.3149];if(z){marker(DE,S[3]+6.6,t,'#7ab4ff',a);marker(WI,S[3]+7.2,t,'#ff7a7a',a);lab(DE,'DETROIT, USA',-150,-60,a*ramp(t,S[3]+6.8,S[3]+7.4),{bd:'#7ab4ff'});lab(WI,'WINDSOR, CANADA',230,8,a*ramp(t,S[3]+7.4,S[3]+8),{bd:'#ff7a7a'});
+   const sl=seg([DE[0],42.3285],[DE[0],42.262],30),k=ramp(t,S[3]+8.2,S[3]+10.2),fo=1-ramp(t,B.f3_bridge-.5,B.f3_bridge);gline(sl,k,'#ffd23f',7,a*fo,[18,12]);if(k>=1){const e=proj(sl[sl.length-1]);if(e){ctx.save();ctx.globalAlpha=a*fo;ctx.strokeStyle='#ffd23f';ctx.lineWidth=8;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(e[0]-22,e[1]-22);ctx.lineTo(e[0],e[1]);ctx.lineTo(e[0]+22,e[1]-22);ctx.stroke();ctx.restore();pill(e[0],e[1]+56,'SOUTH ↓  =  CANADA',{a:a*fo*ramp(t,S[3]+10,S[3]+10.6),fg:'#ffd23f'});}}
+   const BR=[-83.074,42.312],TU=[-83.0405,42.3245];marker(BR,B.f3_bridge,t,'#ffffff',a);marker(TU,B.f3_bridge+.6,t,'#ffffff',a);lab(BR,'AMBASSADOR BRIDGE',-200,10,a*ramp(t,B.f3_bridge+.2,B.f3_bridge+.8),{size:28,bd:'#fff'});lab(TU,'TUNNEL',130,-50,a*ramp(t,B.f3_bridge+.8,B.f3_bridge+1.4),{size:28,bd:'#fff'});}}}
+ // ===== F4 Rome vs NY =====
+ {const a=win(t,S[4]+2.6,N(4));if(a>0){const NY=[-74.0,40.71],RO=[12.5,41.9];marker(NY,S[4]+3.4,t,'#ff5a5a',a);marker(RO,S[4]+4.0,t,'#ffd23f',a);
+  lab(NY,'NEW YORK · 40.7°N',-40,-62,a*ramp(t,S[4]+3.6,S[4]+4.2),{bd:'#ff7a7a'});lab(RO,'ROME · 41.9°N',0,64,a*ramp(t,S[4]+4.2,S[4]+4.8));
+  gline(seg([-74,40.71],[20,40.71],60),ramp(t,S[4]+5.2,S[4]+9),'#ffffff',4,a,[16,12]);gline(seg([-74,41.9],[20,41.9],60),ramp(t,S[4]+6,S[4]+9.6),'#ffd23f',4,a,[16,12]);
+  const CH=[-87.63,41.88];marker(CH,B.f4_chicago,t,'#ffd23f',a);lab(CH,'CHICAGO · 41.9°N',0,62,a*ramp(t,B.f4_chicago+.2,B.f4_chicago+.8));
+  const LO=[-0.13,51.51],CA=[-114.07,51.05];marker(LO,B.f4_london,t,'#7fd8ff',a);marker(CA,B.f4_london+.8,t,'#7fd8ff',a);lab(LO,'LONDON · 51.5°N',0,-62,a*ramp(t,B.f4_london+.2,B.f4_london+.8),{bd:'#7fd8ff'});lab(CA,'CALGARY · 51.0°N',0,-62,a*ramp(t,B.f4_london+1,B.f4_london+1.6),{bd:'#7fd8ff'});
+  gline(seg([-114,51.05],[0,51.05],50),ramp(t,B.f4_london+1.2,B.f4_london+3.5),'#7fd8ff',4,a,[16,12]);}}
+ // ===== F5 Greenland vs Africa =====
+ {const a=win(t,S[5]+2.6,N(5));if(a>0){const GRL=A('GRL');hl(GRL,'#ffffff',a*(1-.6*ramp(t,B.f5_reality,B.f5_reality+.6)),0.3);hl(AFRICA,'#ffd23f',a*ramp(t,S[5]+4,S[5]+5),0.25);
+  lab([-40,73],'GREENLAND',0,0,a*ramp(t,S[5]+3,S[5]+3.6),{bd:'#fff'});lab([20,10],'AFRICA',0,-170,a*ramp(t,S[5]+4.6,S[5]+5.2)*(1-ramp(t,B.f5_mercator-.3,B.f5_mercator+.2)));
+  const k=cub(ramp(t,B.f5_reality,B.f5_reality+3));if(k>0){const tgt=d3.geoInterpolate([-41,74],[22,6])(k);hl(moveFC(GRL,[-41,74],tgt),'#ffffff',a,0.55);}
+  bigText(CX,930,'AFRICA ≈ 14 × GREENLAND',84,a*ramp(t,B.f5_reality+3,B.f5_reality+3.6));
+  const am=win(t,B.f5_mercator,N(5),0.8,0.5);if(am>0){const x=1230,y=170,w=620,h=520;panel(x,y,w,h,am,'MERCATOR PROJECTION · 1569');ctx.save();ctx.beginPath();ctx.rect(x+20,y+70,w-40,h-90);ctx.clip();
+   const mp=d3.geoMercator().fitExtent([[x+20,y+80],[x+w-20,y+h-20]],{type:'Sphere'}).clipExtent([[x+20,y+70],[x+w-20,y+h-20]]);const mpp=d3.geoPath(mp,ctx);
+   mp.scale(mp.scale()*1.0);ctx.globalAlpha=am;ctx.fillStyle='#244a73';ctx.fillRect(x+20,y+70,w-40,h-90);ctx.fillStyle='#4f8a5c';ctx.beginPath();mpp(B110);ctx.fill();
+   ctx.fillStyle='rgba(255,255,255,.85)';ctx.beginPath();mpp(A('GRL'));ctx.fill();ctx.fillStyle='rgba(255,210,63,.9)';ctx.beginPath();mpp(AFRICA);ctx.fill();ctx.restore();
+   pill(x+w/2,y+h-40,'Greenland looks as big as Africa',{inP:1,a:am,size:26});}}}
+ // ===== F6 Diomede =====
+ {const a=win(t,S[6]+2.6,N(6));if(a>0){const z=c.R>20000;const ru=z?R10('bering').features.filter(f=>f.properties.a==='RUS'):W50.RUS,us=z?R10('bering').features.filter(f=>f.properties.a==='USA'):W50.USA;
+  hl(FC(ru),'#ff4040',a,z?0.55:0.35);hl(FC(us),'#3d8bff',a,z?0.55:0.35);
+  if(!z){lab([-174,66.8],'RUSSIA',0,0,a*(1-ramp(c.R,8000,20000)),{bd:'#ff7a7a'});lab([-158,64.6],'USA',0,0,a*(1-ramp(c.R,8000,20000)),{bd:'#7ab4ff'});}
+  if(z){gline([[-168.975,65.86],[-168.975,65.67]],ramp(t,B.f6_date,B.f6_date+1.6),'#ffffff',3,a,[14,12]);lab([-168.975,65.69],'INTERNATIONAL DATE LINE',0,0,a*ramp(t,B.f6_date+1,B.f6_date+1.6)*(1-ramp(t,B.f6_tomorrow+1.2,B.f6_tomorrow+1.6)),{bd:'#fff',size:26});
+   gline(seg([-169.02454,65.77717],[-168.943,65.7647],24),ramp(t,S[6]+8.6,S[6]+9.8),'#ffd23f',9,a);lab([-168.9838,65.7709],'3.8 km',0,-70,a*ramp(t,S[6]+9.4,S[6]+10));
+   lab([-169.05,65.79],'BIG DIOMEDE (RUSSIA)',-120,-150,a*ramp(t,S[6]+8,S[6]+8.6),{bd:'#ff7a7a'});lab([-168.925,65.755],'LITTLE DIOMEDE (USA)',140,150,a*ramp(t,S[6]+8.3,S[6]+8.9),{bd:'#7ab4ff'});
+   const k=ramp(t,B.f6_tomorrow,B.f6_tomorrow+.6);pill(420,880,'TOMORROW ISLAND · UTC+12',{a:a*k,bd:'#ff7a7a',size:32});pill(1500,880,'YESTERDAY ISLE · UTC−9',{a:a*ramp(t,B.f6_tomorrow+.8,B.f6_tomorrow+1.4),bd:'#7ab4ff',size:32});
+   bigText(CX,960,'21 HOURS APART',70,a*ramp(t,B.f6_tomorrow+1.6,B.f6_tomorrow+2.2));}}}
+ // ===== F7 France =====
+ let n7=0;{const a=win(t,S[7]+2.6,N(7));if(a>0){hl(A('FRA'),'#3d8bff',a,0.5);
+  for(const p of P.TER){if(t<p[3])continue;n7++;marker([p[0],p[1]],p[3],t,'#ffd23f',a);lab([p[0],p[1]],p[2],p[4]||0,p[5]??-56,a*ramp(t,p[3],p[3]+.3),{size:26});}
+  const k=win(t,B.f7_noon,N(7),.6,.6);if(k>0){pill(60,820,'PARIS  12:00',{a:k,align:'l',size:36});pill(60,900,'TAHITI  01:00',{a:k*ramp(t,B.f7_noon+.8,B.f7_noon+1.2),align:'l',size:36,bd:'#7fd8ff'});pill(60,980,'NEW CALEDONIA  22:00',{a:k*ramp(t,B.f7_noon+1.6,B.f7_noon+2),align:'l',size:36,bd:'#7fd8ff'});}}}
+ const cn=document.getElementById('count');cn.style.opacity=win(t,P.SPIN[0]-.4,N(7)-.2);cn.querySelector('.n').textContent=n7;
+ // ===== F8 Baarle =====
+ {const a=win(t,S[8]+2.6,N(8));if(a>0){const z=c.R>20000;hl(z?R10a('baarle','BEL'):A('BEL'),'#ff4040',a,0.4);hl(z?R10a('baarle','NLD'):A('NLD'),'#ff9500',a,0.4);
+  const BA=[4.93,51.44];marker(BA,S[8]+3.6,t,'#ffd23f',a);lab(BA,'BAARLE',0,-62,a*ramp(t,S[8]+3.8,S[8]+4.4));lab([4.6,51.25],'BELGIUM',0,0,a*ramp(t,S[8]+4,S[8]+4.6),{bd:'#ff7a7a'});lab([4.7,51.62],'NETHERLANDS',-60,0,a*ramp(t,S[8]+4.2,S[8]+4.8),{bd:'#ffb347'});
+  const am=win(t,B.f8_houses,N(8),.8,.5);if(am>0){const x=1140,y=160,w=700,h=640;panel(x,y,w,h,am,'BAARLE · SIMPLIFIED ILLUSTRATION');const r=mul(19);ctx.save();ctx.globalAlpha=am;ctx.beginPath();ctx.rect(x+20,y+70,w-40,h-90);ctx.clip();
+   ctx.fillStyle='rgba(255,149,0,.55)';ctx.fillRect(x+20,y+70,w-40,h-90);const g=ramp(t,B.f8_houses+.4,B.f8_houses+4);
+   for(let i=0;i<22;i++){const bx=x+70+r()*(w-140),by=y+120+r()*(h-200),rad=14+r()*40;if(i/22>g)continue;ctx.fillStyle='rgba(255,64,64,.9)';ctx.beginPath();ctx.ellipse(bx,by,rad,rad*(.6+r()*.5),r()*3,0,7);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+    if(i%3===0&&ramp(t,B.f8_pieces+1,B.f8_pieces+2)>0){ctx.fillStyle='rgba(255,149,0,1)';ctx.beginPath();ctx.arc(bx,by,rad*.35,0,7);ctx.fill();}}
+   const hx=x+w/2,hy=y+h/2+40;ctx.fillStyle='#fff';ctx.fillRect(hx-60,hy-30,120,80);ctx.beginPath();ctx.moveTo(hx-75,hy-30);ctx.lineTo(hx,hy-90);ctx.lineTo(hx+75,hy-30);ctx.fill();
+   ctx.strokeStyle='#ffd23f';ctx.lineWidth=6;ctx.setLineDash([12,8]);ctx.beginPath();ctx.moveTo(hx-10,hy-120);ctx.lineTo(hx+10,hy+90);ctx.stroke();ctx.restore();
+   pill(x+175,y+h-50,'BELGIUM',{inP:1,a:am,size:24,bd:'#ff7a7a'});pill(x+w-180,y+h-50,'NETHERLANDS',{inP:1,a:am,size:24,bd:'#ffb347'});
+   pill(x+w/2,y+150,'22 Belgian pieces inside the Netherlands',{inP:1,a:am*ramp(t,B.f8_pieces,B.f8_pieces+.6),size:24});}}}
+ // ===== F9 Point Roberts =====
+ {const a=win(t,S[9]+2.6,N(9));if(a>0){const z=c.R>20000;hl(z?R10a('proberts','USA'):A('USA'),'#3d8bff',a,0.4);hl(z?R10a('proberts','CAN'):A('CAN'),'#ff4040',a,0.4);
+  const PR=[-123.07,48.98];gline(seg([-123.6,49.0],[-122.55,49.0],30),ramp(t,B.f9_parallel-.4,B.f9_parallel+1.6),'#ffd23f',5,a,[18,12]);lab([-123.45,49.0],'49th PARALLEL',0,-48,a*ramp(t,B.f9_parallel+1,B.f9_parallel+1.6));
+  marker(PR,S[9]+3.6,t,'#7ab4ff',a);lab(PR,'POINT ROBERTS, USA',0,64,a*ramp(t,S[9]+3.8,S[9]+4.4),{bd:'#7ab4ff'});lab([-122.95,49.15],'CANADA',0,0,a*ramp(t,S[9]+4,S[9]+4.6),{bd:'#ff7a7a'});
+  const route=[[-123.07,48.985],[-123.06,49.02],[-122.98,49.08],[-122.85,49.09],[-122.76,49.03],[-122.75,48.995]];gline(route,ramp(t,B.f9_students,B.f9_students+3),'#ffffff',5,a,[10,10]);
+  const BL=[-122.75,48.99];marker(BL,B.f9_students+3,t,'#ffd23f',a);lab(BL,'SCHOOL · BLAINE, WA',230,64,a*ramp(t,B.f9_students+3.2,B.f9_students+3.8));}}
+ // ===== F10 China =====
+ {const a=win(t,S[10]+2.6,N(10));if(a>0){hl(A('CHN'),'#ff4040',a,0.4);lab([104,34],'ONE TIME ZONE · UTC+8',0,0,a*ramp(t,S[10]+3.4,S[10]+4));
+  const ka=win(t,B.f10_afghan,N(10),.6,.6);hl(A('AFG'),'#ffd23f',a*ka,0.4);const AB=[74.9,37.1];marker(AB,B.f10_afghan+.4,t,'#ffd23f',a*ka);lab(AB,'CLOCKS JUMP 3½ HOURS',-60,-64,a*ka*ramp(t,B.f10_afghan+.6,B.f10_afghan+1.2));
+  const XJ=[87.62,43.82];marker(XJ,B.f10_xinjiang,t,'#7fd8ff',a);lab(XJ,'XINJIANG TIME · UTC+6 (unofficial)',0,-64,a*ramp(t,B.f10_xinjiang+.2,B.f10_xinjiang+.8),{bd:'#7fd8ff'});}}
+ // ===== F11 Chimborazo =====
+ {const CHIM=[-78.817,-1.469],EV=[86.925,27.988];const a=win(t,S[11]+2.6,N(11));if(a>0){marker(CHIM,S[11]+3.4,t,'#ffd23f',a);lab(CHIM,'CHIMBORAZO · ECUADOR',0,-64,a*ramp(t,S[11]+3.6,S[11]+4.2)*(1-ramp(t,B.f11_bulges,B.f11_bulges+1)));
+  const b=win(t,B.f11_bulges+3,N(11),.8,.6);if(b>0){gline(seg([-180,0],[180,0],120),ramp(t,B.f11_bulges+3.2,B.f11_bulges+4.6),'#ffd23f',5,b);const pb=ramp(t,B.f11_bulges+4,B.f11_bulges+5.5);
+   ctx.save();ctx.globalAlpha=b;ctx.setLineDash([16,12]);ctx.strokeStyle='#ffffffaa';ctx.lineWidth=3;ctx.beginPath();ctx.arc(CX,CY,c.R,0,7);ctx.stroke();ctx.setLineDash([]);ctx.strokeStyle='#ffd23f';ctx.lineWidth=6;ctx.shadowColor='#ffd23f';ctx.shadowBlur=20;ctx.beginPath();ctx.ellipse(CX,CY,c.R*(1+.09*pb),c.R*(1-.05*pb),0,0,7);ctx.stroke();ctx.restore();
+   const pc=proj(CHIM),pv=proj(EV),r1=ramp(t,B.f11_bulges+5.6,B.f11_bulges+6.6),r2=ramp(t,B.f11_still,B.f11_still+1);ctx.save();ctx.globalAlpha=b;ctx.lineWidth=7;ctx.lineCap='round';
+   if(pc&&r1>0){ctx.strokeStyle='#ffd23f';ctx.beginPath();ctx.moveTo(CX,CY);ctx.lineTo(CX+(pc[0]-CX)*r1,CY+(pc[1]-CY)*r1);ctx.stroke();}if(pv&&r2>0){ctx.strokeStyle='#fff';ctx.beginPath();ctx.moveTo(CX,CY);ctx.lineTo(CX+(pv[0]-CX)*r2,CY+(pv[1]-CY)*r2);ctx.stroke();}
+   ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(CX,CY,10,0,7);ctx.fill();ctx.restore();marker(CHIM,B.f11_bulges+4.4,t,'#ffd23f',b);marker(EV,B.f11_still+.8,t,'#fff',b);
+   lab(CHIM,'CHIMBORAZO · 6,384 km from center',330,110,b*ramp(t,B.f11_bulges+6.4,B.f11_bulges+7));lab(EV,'EVEREST · 6,382 km',-200,-80,b*ramp(t,B.f11_still+1,B.f11_still+1.6),{bd:'#fff'});lab([6.2,0],'EQUATOR BULGE',0,c.R*.2,b*win(t,B.f11_bulges+4.4,B.f11_bulges+6.4));}}}
+ // ===== F12 Mauna Kea =====
+ {const a=win(t,S[12]+2.6,N(12));if(a>0){const MK=[-155.47,19.82];marker(MK,S[12]+3.4,t,'#ffd23f',a);lab(MK,'MAUNA KEA · HAWAII',-170,-64,a*ramp(t,S[12]+3.6,S[12]+4.2));
+  const am=win(t,S[12]+5,N(12),.8,.5);if(am>0){const x=1060,y=150,w=800,h=760;panel(x,y,w,h,am,'CROSS-SECTION · HEIGHT IN METRES');const y0=y+640,sc=(h-200)/16000,Y=m=>y0-(m+6000)*sc;
+   ctx.save();ctx.globalAlpha=am;ctx.fillStyle='rgba(20,90,170,.65)';ctx.fillRect(x+30,Y(0),w-60,Y(-6000)-Y(0));ctx.strokeStyle='#7fd8ff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+30,Y(0));ctx.lineTo(x+w-30,Y(0));ctx.stroke();
+   ctx.fillStyle='#7fd8ff';ctx.font='22px Archivo';ctx.textAlign='left';ctx.fillText('SEA LEVEL',x+40,Y(0)-10);ctx.fillText('OCEAN FLOOR −6,000 m',x+40,Y(-6000)-10);
+   const g=sine(ramp(t,S[12]+5.6,S[12]+8.6)),top=-6000+g*10210,mx=x+w*.62;ctx.fillStyle='#8b6a4a';ctx.beginPath();ctx.moveTo(mx-300,Y(-6000));ctx.quadraticCurveTo(mx-120,Y(-6000+(top+6000)*.55),mx-30,Y(top));ctx.lineTo(mx+30,Y(top));ctx.quadraticCurveTo(mx+120,Y(-6000+(top+6000)*.55),mx+300,Y(-6000));ctx.closePath();ctx.fill();
+   ctx.strokeStyle='#ffd23f';ctx.lineWidth=3;ctx.stroke();if(g>.98){ctx.setLineDash([10,8]);ctx.strokeStyle='#ffd23f';ctx.beginPath();ctx.moveTo(x+30,Y(4207));ctx.lineTo(x+w-30,Y(4207));ctx.stroke();ctx.setLineDash([]);}
+   const ev=sine(ramp(t,B.f12_kilometer-.6,B.f12_kilometer+1.4)),ex=x+190;if(ev>0){ctx.fillStyle='#d9d9d9';ctx.beginPath();ctx.moveTo(ex-120,Y(0));ctx.lineTo(ex,Y(8849*ev));ctx.lineTo(ex+120,Y(0));ctx.closePath();ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.stroke();}ctx.restore();
+   pill(mx-150,Y(top)-46,'10,210 m BASE TO PEAK',{inP:1,a:am*ramp(t,S[12]+8.4,S[12]+9),size:22});pill(ex+40,Y(8849)-30,'EVEREST 8,849 m',{inP:1,a:am*ramp(t,B.f12_kilometer+1.2,B.f12_kilometer+1.8),size:24,bd:'#fff'});
+   pill(x+w-190,Y(4207)+34,'4,207 m ABOVE THE WAVES',{inP:1,a:am*ramp(t,B.f12_above,B.f12_above+.6),size:20,bd:'#7fd8ff'});{const br=(bx,y1,y2,col,k)=>{if(k<=0)return;ctx.save();ctx.globalAlpha=am*k;ctx.strokeStyle=col;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(bx-10,y1);ctx.lineTo(bx,y1);ctx.lineTo(bx,y2);ctx.lineTo(bx-10,y2);ctx.stroke();ctx.restore();};br(x+w-40,Y(-6000),Y(4207),'#ffd23f',ramp(t,S[12]+8.6,S[12]+9.2));br(ex-140,Y(0),Y(8849),'#ffffff',ramp(t,B.f12_kilometer+1.4,B.f12_kilometer+2));}}}}
+ // ===== F13 Baikal =====
+ {const a=win(t,S[13]+2.6,N(13));if(a>0){const BK=LAKE('Lake Baikal');hl(BK,'#4fd1ff',a,0.6);lab([108.5,54.8],'LAKE BAIKAL',260,0,a*ramp(t,S[13]+3.4,S[13]+4));
+  const am=win(t,S[13]+6,N(13),.8,.5);if(am>0){const x=1500,y=170,w=330,h=640;panel(x,y,w,h,am,'MAX DEPTH');const g=sine(ramp(t,S[13]+6.4,S[13]+9));ctx.save();ctx.globalAlpha=am;
+   const gx=x+120,gy=y+90,gh=h-170;ctx.fillStyle='rgba(255,255,255,.08)';ctx.fillRect(gx,gy,90,gh);const gr=ctx.createLinearGradient(0,gy,0,gy+gh);gr.addColorStop(0,'#4fd1ff');gr.addColorStop(1,'#08306b');ctx.fillStyle=gr;ctx.fillRect(gx,gy,90,gh*g);ctx.restore();
+   bigText(x+w/2,y+h-50,Math.round(1642*g).toLocaleString('en-US')+' m',54,am,'#fff');}
+  pill(560,860,'≈ 1/5 of Earth\'s unfrozen surface fresh water',{a:a*win(t,B.f13_fifth,N(13)),size:34});pill(560,940,'≈ 25 MILLION YEARS OLD',{a:a*win(t,B.f13_oldest,N(13)),size:34,bd:'#7fd8ff'});}}
+ // ===== F14 Dead Sea =====
+ {const a=win(t,S[14]+2.6,N(14));if(a>0){const DS=LAKE('Dead Sea');hl(DS,'#4fd1ff',a,0.7);hl(R10('deadsea'),'#ffffff',a*.4,0.0);lab([35.5,31.55],'DEAD SEA',-240,0,a*ramp(t,S[14]+3.4,S[14]+4));
+  const am=win(t,S[14]+4.6,N(14),.8,.5);if(am>0){const x=1460,y=200,w=380,h=560;panel(x,y,w,h,am,'ELEVATION');const g=sine(ramp(t,S[14]+5,S[14]+7.6));ctx.save();ctx.globalAlpha=am;
+   const sy=y+150;ctx.strokeStyle='#7fd8ff';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x+30,sy);ctx.lineTo(x+w-30,sy);ctx.stroke();ctx.fillStyle='#7fd8ff';ctx.font='22px Archivo';ctx.fillText('SEA LEVEL',x+40,sy-12);
+   ctx.fillStyle='#ffd23f';ctx.fillRect(x+w/2-40,sy,80,(h-260)*g);ctx.restore();bigText(x+w/2,y+h-60,'−'+Math.round(430*g)+' m',58,am,'#fff');}
+  bigText(CX,900,'SO SALTY YOU FLOAT',70,a*win(t,B.f14_salty,N(14)));}}
+ // ===== F15 Antarctica =====
+ {const a=win(t,S[15]+2.6,N(15));if(a>0){hl(A('ATA'),'#ffffff',a*ramp(t,B.f15_antarctica,B.f15_antarctica+.8),0.35);lab([0,-80],'ANTARCTICA · POLAR DESERT',0,0,a*ramp(t,B.f15_antarctica+.4,B.f15_antarctica+1));
+  const am=win(t,B.f15_covers,N(15),.8,.5);if(am>0){const x=1180,y=740,w=680,h=230;panel(x,y,w,h,am,'AREA');const g=sine(ramp(t,B.f15_covers+.3,B.f15_covers+2));ctx.save();ctx.globalAlpha=am;
+   ctx.fillStyle='#ffffff';ctx.fillRect(x+30,y+80,560*g,44);ctx.fillStyle='#ffb347';ctx.fillRect(x+30,y+150,560*9.2/14.2*g,44);ctx.font='24px Archivo';ctx.fillStyle='#111';ctx.fillText('ANTARCTICA 14.2M km²',x+44,y+111);ctx.fillText('SAHARA 9.2M km²',x+44,y+181);ctx.restore();}}}
+ // ===== F16 Africa vs Moon =====
+ {const a=win(t,S[16]+2.6,N(16));if(a>0){hl(AFRICA,'#ffd23f',a,0.28);const w=proj([-17.4,14.7]),e=proj([51.3,11.8]);const mfade=1-ramp(t,B.f16_united,B.f16_united+.8);
+  if(w&&e){const pm=ramp(t,S[16]+4,S[16]+5.6);if(pm>0){ctx.save();ctx.globalAlpha=a;ctx.strokeStyle='#fff';ctx.lineWidth=6;ctx.beginPath();const y=(w[1]+e[1])/2;ctx.moveTo(w[0],y);ctx.lineTo(w[0]+(e[0]-w[0])*pm,y);ctx.stroke();ctx.restore();}
+   lab([17,14],'AFRICA · 7,400 km WIDE',0,-60,a*ramp(t,S[16]+5.4,S[16]+6)*mfade);const rM=kmR(1737.4),mx=(w[0]+e[0])/2,my=(w[1]+e[1])/2+rM+40;
+   [[mx-rM,B.f16_line],[mx+rM,B.f16_line+.6]].forEach(([x,t0])=>{const k=cub(ramp(t,t0,t0+1.2));if(k>0)moon(x+(1-k)*1100,my,rM,a*mfade);});
+   lab([24,-14],'MOON · 3,475 km',0,60,a*ramp(t,B.f16_line+1.8,B.f16_line+2.4)*mfade,{bd:'#fff'});}
+  const k=ramp(t,B.f16_united,B.f16_united+.6);if(k>0){[[USA48,[-98,39],[6,18],'#3d8bff',0],[A('CHN'),[103,36],[33,-2],'#ff4040',0.7],[A('IND'),[79,22],[22,-22],'#ff9500',1.4]].forEach(([fc,c0,c1,col,d])=>{
+   const q=cub(ramp(t,B.f16_united+d,B.f16_united+d+2.4));if(q<=0)return;hl(moveFC(fc,c0,d3.geoInterpolate(c0,c1)(q)),col,a,0.6);});
+   bigText(CX,960,'USA + CHINA + INDIA FIT INSIDE AFRICA',66,a*ramp(t,B.f16_united+3.6,B.f16_united+4.2));}}}
+ // ===== F17 Russia vs Pluto =====
+ {const a=win(t,S[17]+2.6,N(17));if(a>0){hl(A('RUS'),'#ff4040',a,0.4);const am=win(t,S[17]+3.4,N(17),.8,.5);if(am>0){const k=cub(ramp(t,S[17]+3.4,S[17]+4.8)),px=1560+(1-k)*500,py=470,pr=200;
+   ctx.save();ctx.globalAlpha=am;const g=ctx.createRadialGradient(px-60,py-60,20,px,py,pr);g.addColorStop(0,'#e8d3b8');g.addColorStop(.7,'#b08b67');g.addColorStop(1,'#5a4232');ctx.fillStyle=g;ctx.shadowColor='#000';ctx.shadowBlur=40;ctx.beginPath();ctx.arc(px,py,pr,0,7);ctx.fill();ctx.shadowBlur=0;
+   const hh=ramp(t,B.f17_heart,B.f17_heart+.8);ctx.fillStyle=`rgba(255,244,230,${.55+.35*hh})`;ctx.beginPath();ctx.moveTo(px+20,py+120);ctx.bezierCurveTo(px-110,py+30,px-70,py-60,px+10,py-10);ctx.bezierCurveTo(px+80,py-70,px+140,py+10,px+20,py+120);ctx.fill();
+   if(hh>0){ctx.strokeStyle='#ffd23f';ctx.lineWidth=4;ctx.shadowColor='#ffd23f';ctx.shadowBlur=20*hh;ctx.globalAlpha=am*hh;ctx.stroke();}ctx.restore();pill(px,py+pr+50,'PLUTO',{a:am,bd:'#e8d3b8'});
+   const bx=1180,by=800,bw=680;panel(bx,by,bw,200,am*ramp(t,S[17]+5,S[17]+5.6),'AREA');const g2=sine(ramp(t,S[17]+5.4,S[17]+7));ctx.save();ctx.globalAlpha=am*ramp(t,S[17]+5,S[17]+5.6);
+   ctx.fillStyle='#ff4040';ctx.fillRect(bx+30,by+70,560*g2,42);ctx.fillStyle='#e8d3b8';ctx.fillRect(bx+30,by+130,560*16.6/17.1*g2,42);ctx.font='24px Archivo';ctx.fillStyle='#111';ctx.fillText('RUSSIA 17.1M km²',bx+44,by+100);ctx.fillText('PLUTO (whole surface) 16.6M km²',bx+44,by+160);ctx.restore();}}}
+ // ===== F18 Australia =====
+ {const a=win(t,S[18]+2.6,N(18));if(a>0){hl(A('AUS'),'#ffd23f',a,0.28);const w=proj([113.2,-25.5]),e=proj([153.6,-28.6]);if(w&&e){const y=(w[1]+e[1])/2,pm=ramp(t,S[18]+4,S[18]+5.4);
+   ctx.save();ctx.globalAlpha=a;ctx.strokeStyle='#fff';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(w[0],y);ctx.lineTo(w[0]+(e[0]-w[0])*pm,y);ctx.stroke();ctx.restore();pill((w[0]+e[0])/2,y-60,'≈ 4,000 km',{a:a*ramp(t,S[18]+5.2,S[18]+5.8)});
+   const rM=kmR(1737.4),k=cub(ramp(t,B.f18_australia+1.5,B.f18_australia+3));if(k>0){moon((w[0]+e[0])/2+(1-k)*1100,y,rM,a*.88);pill((w[0]+e[0])/2,y+rM+50,'MOON · 3,475 km',{a:a*ramp(t,B.f18_australia+3,B.f18_australia+3.6),bd:'#fff'});}}}}
+ // ===== F19 Alaska =====
+ {const a=win(t,S[19]+2.6,N(19));if(a>0){hl(ALASKA,'#3d8bff',a,0.45);gline(seg([180,72],[180,45],40),ramp(t,B.f19_180,B.f19_180+1.6),'#ffd23f',5,a,[18,12]);lab([180,66],'180° MERIDIAN',0,0,a*ramp(t,B.f19_180+1,B.f19_180+1.6));
+  const pts=[[[-156.77,71.39],'NORTHERNMOST',0,-60],[[-179.1,51.25],'WESTERNMOST',190,70],[[179.6,51.95],'EASTERNMOST',-210,-50]];pts.forEach(([ll,txt,dx,dy],i)=>{const t0=S[19]+3.6+i*1.2;marker(ll,t0,t,'#ffd23f',a);lab(ll,txt,dx,dy,a*ramp(t,t0+.2,t0+.8));});
+  const al=win(t,B.f19_aleutian,N(19));lab([-172,51.5],'ALEUTIAN ISLANDS',80,140,a*al,{bd:'#7ab4ff'});}}
+ // ===== F20 Canada =====
+ {const a=win(t,S[20]+2.6,N(20));if(a>0){const CA=A('CAN');fillF(CA,'#ff4040',.25*a);const p=ramp(t,S[20]+3.4,S[20]+12);if(p>0){const cc=proj([-95,62]);ctx.save();ctx.beginPath();ctx.moveTo(cc[0],cc[1]);ctx.arc(cc[0],cc[1],3000,-Math.PI/2,-Math.PI/2+p*2*Math.PI);ctx.closePath();ctx.clip();glow(CA,'#ffd23f',4,a);ctx.restore();}
+  bigText(CX,930,Math.round(202080*sine(p)).toLocaleString('en-US')+' km OF COASTLINE',72,a*ramp(t,S[20]+3.4,S[20]+4));
+  pill(1600,330,'≈ 30 YEARS AT 20 km A DAY',{a:a*win(t,B.f20_walk,N(20)),size:32});pill(1600,420,'TENS OF THOUSANDS OF ISLANDS',{a:a*win(t,B.f20_reason,N(20)),size:32,bd:'#7fd8ff'});}}
+ // ===== F21 Istanbul =====
+ {const a=win(t,S[21]+2.6,N(21));if(a>0){hl(TUR_EU,'#3d8bff',a,0.45);hl(TUR_AS,'#ff9500',a,0.45);const z=c.R>60000;
+  lab([28.93,41.06],'EUROPE',-160,0,a*ramp(t,S[21]+6,S[21]+6.6)*(z?1:0),{bd:'#7ab4ff'});lab([29.12,41.0],'ASIA',170,60,a*ramp(t,S[21]+6.4,S[21]+7)*(z?1:0),{bd:'#ffb347'});
+  lab([29.06,41.12],'BOSPHORUS',60,-90,a*win(t,B.f21_bosphorus,N(21))*(z?1:0),{bd:'#7fd8ff'});pill(CX,960,'CAPITAL OF THE ROMAN · BYZANTINE · OTTOMAN EMPIRES',{a:a*win(t,B.f21_capital,N(21)),size:30});}}
+ // ===== F22 Vatican =====
+ {const a=win(t,S[22]+2.6,N(22));if(a>0){const z=c.R>200000;hl(FC([{type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[[[12.4457,41.9029],[12.4462,41.9017],[12.4480,41.9008],[12.4510,41.9001],[12.4546,41.9006],[12.4572,41.9012],[12.4583,41.9022],[12.4571,41.9047],[12.4560,41.9062],[12.4538,41.9074],[12.4502,41.9068],[12.4473,41.9056],[12.4457,41.9029]].reverse()]}}]),'#ffd23f',a*(z?1:0),0.55);marker([12.4534,41.9029],S[22]+3.4,t,'#ffd23f',a*(z?0:1));
+  lab([12.452,41.9038],'VATICAN CITY · 0.49 km²',0,-230,a*ramp(t,S[22]+7,S[22]+7.6));lab([12.47,41.89],'ROME, ITALY',300,240,a*win(t,B.f22_inside,N(22)),{bd:'#fff'});}}
+ // ===== F23 Kazakhstan =====
+ {const a=win(t,S[23]+2.6,N(23));if(a>0){hl(A('KAZ'),'#ffd23f',a,0.35);lab([67,48],'KAZAKHSTAN',0,-20,a*ramp(t,S[23]+3.4,S[23]+4)*(1-ramp(t,B.f23_western,B.f23_western+.5)));
+  const q=cub(ramp(t,B.f23_western,B.f23_western+3));if(q>0){hl(moveFC(WEU,[5,47],d3.geoInterpolate([5,47],[68,48])(q)),'#ffffff',a,0.45);lab([68,48],'WESTERN EUROPE',0,0,a*ramp(t,B.f23_western+3,B.f23_western+3.6),{bd:'#fff'});}
+  const CS=[50.5,42.0];marker(CS,B.f23_caspian,t,'#7fd8ff',a);lab(CS,'CASPIAN SEA · usually classed as a lake',-40,70,a*ramp(t,B.f23_caspian+.2,B.f23_caspian+.8),{bd:'#7fd8ff',size:28});}}
+ // ===== F24 Doubly landlocked =====
+ {const a=win(t,S[24]+2.6,N(24));if(a>0){const la=win(t,S[24]+2.6,B.f24_uzbek+.6,.6,.6),ua=win(t,B.f24_uzbek+2.2,N(24));
+  hl(A('CHE','AUT'),'#9aa5b1',a*la,0.3);hl(A('LIE'),'#ffd23f',a*la,0.8);marker([9.55,47.15],B.f24_liech,t,'#ffd23f',a*la);lab([9.55,47.15],'LIECHTENSTEIN',0,-64,a*la*ramp(t,B.f24_liech+.2,B.f24_liech+.8));
+  lab([8.2,46.8],'SWITZERLAND',-60,60,a*la*ramp(t,B.f24_liech+1,B.f24_liech+1.6),{bd:'#9aa5b1',size:26});lab([13.5,47.5],'AUSTRIA',0,0,a*la*ramp(t,B.f24_liech+1.2,B.f24_liech+1.8),{bd:'#9aa5b1',size:26});
+  hl(A('KAZ','KGZ','TJK','AFG','TKM'),'#9aa5b1',a*ua,0.3);hl(A('UZB'),'#ffd23f',a*ua,0.5);lab([62.5,42.6],'UZBEKISTAN',0,0,a*ua);
+  [[[67,48],'KAZAKHSTAN'],[[76,41.9],'KYRGYZSTAN'],[[71.5,38.3],'TAJIKISTAN'],[[66,34],'AFGHANISTAN'],[[59,39],'TURKMENISTAN']].forEach(([ll,n],i)=>lab(ll,n,0,0,a*ua*ramp(t,B.f24_sits+i*.4,B.f24_sits+i*.4+.5),{bd:'#9aa5b1',size:24}));}}
+ // ===== F25 Point Nemo =====
+ {const a=win(t,S[25]+2.6,P.O+.5);if(a>0){const nm=[-123.4,-48.9];marker(nm,S[25]+3.4,t,'#ffd23f',a);lab(nm,'POINT NEMO',0,-64,a*ramp(t,S[25]+3.6,S[25]+4.2));
+  gline(d3.geoCircle().center(nm).radius(24.17)().coordinates[0],ramp(t,B.f25_nearest,B.f25_nearest+2.4),'#7fd8ff',4,a,[14,10]);lab([-123.4,-73.0],'NEAREST LAND · 2,688 km',0,34,a*ramp(t,B.f25_nearest+2,B.f25_nearest+2.6),{bd:'#7fd8ff'});
+  const sa=win(t,B.f25_space,P.O+.5);if(sa>0){const ph=((t-B.f25_space)/8)*2*Math.PI-1.2;const ex=CX+Math.cos(ph)*c.R*1.2,ey=CY+Math.sin(ph)*c.R*.3-c.R*.05;ctx.save();ctx.globalAlpha=a*sa*.6;ctx.strokeStyle='#7fd8ff';ctx.lineWidth=2;ctx.setLineDash([6,10]);ctx.beginPath();ctx.ellipse(CX,CY-c.R*.05,c.R*1.2,c.R*.3,0,0,7);ctx.stroke();ctx.restore();
+   ctx.save();ctx.globalAlpha=a*sa;ctx.fillStyle='#fff';ctx.shadowColor='#7fd8ff';ctx.shadowBlur=24;ctx.beginPath();ctx.arc(ex,ey,10,0,7);ctx.fill();ctx.restore();pill(ex,ey-44,'ISS · ≈ 400 km UP',{a:a*sa,size:26,bd:'#7fd8ff'});}
+  bigText(CX,960,'THE SPACECRAFT CEMETERY',72,a*win(t,B.f25_spacecraft,P.O+.5));}}
+ // ===== HTML overlays =====
+ let fi=0;for(let i=1;i<=25;i++)if(t>=S[i])fi=i;const fe=fi?win(t,S[fi]+.5,N(fi)-.2,.5,.4):0;const fc=document.getElementById('fact');
+ if(fi&&fc.dataset.i!=fi){fc.dataset.i=fi;fc.querySelector('.n').textContent='#'+fi;fc.querySelector('.h').textContent=HEAD[fi];}fc.style.opacity=fe;fc.style.transform=`translateX(${(1-sine(ramp(t,S[fi]+.5,S[fi]+1.1)))*-40}px)`;
+ let ci=0;for(let i=1;i<=5;i++)if(t>=C[i]&&t<C[i]+20)ci=i;const nextS=[0,S[1],S[6],S[11],S[16],S[21]];const ch=document.getElementById('chap');const ca=ci?win(t,C[ci],nextS[ci]-.1,.5,.5):0;
+ if(ci&&ch.dataset.i!=ci){ch.dataset.i=ci;ch.querySelector('.k').textContent='CHAPTER '+ci;ch.querySelector('.t').textContent=CHAP[ci];}ch.style.opacity=ca;ch.querySelector('.t').style.transform=`scale(${.92+.08*sine(ramp(t,C[ci]||0,(C[ci]||0)+.8))})`;
+ const ti=document.getElementById('title');ti.style.opacity=win(t,21.6,25.7,.5,.5);ti.style.transform=`scale(${.94+.06*sine(ramp(t,21.6,22.6))})`;
+ document.getElementById('sub').style.opacity=win(t,P.O+11.0,638.3,.6,.01);document.getElementById('logo').style.opacity=.85*(1-ca)*(1-win(t,21.6,25.7,.5,.5));
+}
+const HEAD=[null,'RENO IS WEST OF LOS ANGELES','SOUTH AMERICA IS EAST OF MIAMI','CANADA IS SOUTH OF DETROIT','ROME IS NORTH OF NEW YORK','AFRICA IS 14× BIGGER THAN GREENLAND',
+ 'RUSSIA & THE USA: 3.8 KM APART','FRANCE HAS 12 TIME ZONES','THE TOWN IN TWO COUNTRIES','THE US TOWN YOU CAN\'T DRIVE TO','CHINA USES ONE TIME ZONE',
+ 'CHIMBORAZO BEATS EVEREST','MAUNA KEA IS TALLER THAN EVEREST','LAKE BAIKAL: THE DEEPEST LAKE','THE LOWEST LAND ON EARTH','THE BIGGEST DESERT IS ANTARCTICA',
+ 'AFRICA IS WIDER THAN TWO MOONS','RUSSIA IS BIGGER THAN PLUTO','AUSTRALIA IS WIDER THAN THE MOON','ALASKA: NORTH, WEST AND EAST','CANADA\'S 200,000 KM COASTLINE',
+ 'ISTANBUL: TWO CONTINENTS','THE SMALLEST COUNTRY','THE BIGGEST COUNTRY WITHOUT A COAST','DOUBLY LANDLOCKED','POINT NEMO'];
+const CHAP=[null,'YOUR MAP IS LYING TO YOU','BORDERS THAT MAKE NO SENSE','EARTH IS STRANGER THAN YOU THINK','SIZES THAT BREAK YOUR BRAIN','PLACES THAT SHOULDN\'T EXIST'];
+window.__render=render;
+const tl=gsap.timeline({paused:true});const st={t:0};
+tl.to(st,{t:638.2,duration:638.2,ease:'none',onUpdate:()=>render(st.t)},0);
+render(0);
+window.__timelines=window.__timelines||{};window.__timelines['ep1']=tl;
+})();
+</script>
+<audio id="aud" data-start="0" data-duration="638.2" data-track-index="5" src="assets/mix.mp3" data-volume="1"></audio>
+</body></html>

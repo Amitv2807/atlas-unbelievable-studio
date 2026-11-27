@@ -1,0 +1,12 @@
+node_modules/
+.venv/
+ext/
+**/renders/
+*.mp4
+*.mov
+**/assets/hires/
+**/assets/mix.mp3
+**/audio.mp3
+work/
+.DS_Store
+.atlas_contact

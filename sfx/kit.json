@@ -1,0 +1,9 @@
+{"set":"film","format":"wav","sounds":[
+ {"name":"whoosh-flyover","want":"a deep cinematic whoosh for a camera flying over the earth"},
+ {"name":"whoosh-short","want":"a quick short air whoosh for a fast transition"},
+ {"name":"pop-marker","want":"a soft satisfying pop for a map marker appearing"},
+ {"name":"tick-counter","want":"a small clean tick for a number counter"},
+ {"name":"impact-reveal","want":"a deep cinematic boom hit for a big fact reveal"},
+ {"name":"riser","want":"a short tension riser before a reveal"},
+ {"name":"line-draw","want":"a light swish for a line drawing across a map"},
+ {"name":"title-hit","want":"a punchy whoosh hit for a title card slamming in"}]}
