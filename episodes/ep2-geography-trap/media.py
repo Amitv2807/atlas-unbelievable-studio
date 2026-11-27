@@ -37,7 +37,7 @@ BEATS = [
  ("x", 1080.0, 1086.2, "", "VLADIVOSTOK", "Golden Horn Bay ices over in winter", {"file": "PIA16290.jpg"}),
  ("icebreaker|50_Let|Pobedy", 1086.4, 1089.4, "", "ICEBREAKERS", "keep the Pacific port open", {}),
  ("Tsushima|Port_Arthur", 1106.0, 1111.8, "1905", "RUSSIA LOSES PORT ARTHUR TO JAPAN", "", {}),
- ("GSFC_20171208", 1123.6, 1132.2, "", "ARCTIC SEA ICE IS SHRINKING", "ice-free summers expected before 2050", {"kb": [0.6, 0.5, 1.25, 0.8, 0.6, 1.35]}),
+ ("x", 1123.6, 1132.2, "", "ARCTIC SEA ICE IS SHRINKING", "ice-free summers expected before 2050", {"file": "GSFC_20171208_Archive_e000613.jpg", "kb": [-0.2, -0.7, 1.3, -0.4, -0.9, 1.4]}),
  ("x", 1157.3, 1164.0, "", "ANCHORAGE, ALASKA", "home of Joint Base Elmendorf-Richardson and its F-22s", {"file": "PIA02675.jpg"}),
  ("x", 1174.0, 1184.0, "", "PUGET SOUND, WASHINGTON", "Naval Base Kitsap: Ohio-class ballistic missile submarines", {"file": "iss074e0723716.jpg"}),
  ("x", 1201.8, 1208.0, "", "LONGYEARBYEN, SVALBARD", "Norway · demilitarised by the 1920 treaty", {"file": "PIA10626.jpg"}),

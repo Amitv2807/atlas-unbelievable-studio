@@ -44,7 +44,18 @@ In this documentary we follow the map: the European Plain and the invasion road 
 Figures such as casualties, troop numbers, fleet tonnage and trade volumes are estimates from public sources (Western governments, the Pentagon, US Navy intelligence, AidData, port authorities) and are rounded.
 
 Satellite imagery: NASA Blue Marble Next Generation and ASTER GDEM shaded relief via NASA GIBS (public domain). Map data: Natural Earth (public domain). Narration: AI voice.
-Music: YouTube Audio Library: "Missing Persons" (Jeremy Blake), "Deified" and "Level" (The Grey Room / Density & Time), "Body of Water" (TrackTribe), "The Road To Mordor" (Ezra Lipp), "Monthaholic" (Schwartzy), "Black Mass" and "Future Glider" (Brian Bolger), "Epic Journey" (Yung Logos). Sound effects: original.
+Music: YouTube Audio Library: "Black Mass" and "A Fool's Theme" (Brian Bolger), "Blurry Vision" and "Birds" (Corbyn Kites), "Betya" (Lauren Duski). Sound effects: original.
+
+📷 PHOTO CREDITS
+NASA (public domain), images.nasa.gov: ISS crew photos iss070e091714, iss063e032032, iss069e060266, iss072e435710, iss072e574770, iss074e0723716, iss029e012564 (Mike Fossum); Skylab sl4-140-4110; Mercury-Atlas 9 s63-06440; Gemini 11 s66-54558; Space Shuttle s43-151-238; Terra/ASTER PIA10613, PIA16290, PIA02675, PIA10626; NASA GSFC Lop Nur, Pakistan coast and Arctic sea ice.
+Wikimedia Commons:
+• Putin and Xi, 2013: Presidential Executive Office of Russia, CC BY 4.0, https://commons.wikimedia.org/wiki/File:2013_Vladimir_Putin_and_Xi_Jinping_concluded_their_talks_by_approving_a_joint_declaration.jpg
+• Kremlin and Red Square: mos.ru, CC BY 4.0, https://commons.wikimedia.org/wiki/File:Kremlin_and_Red_Square.1.jpg
+• Juggling on the Berlin Wall: Yann Forget (derivative: Durova), CC BY-SA 3.0, https://commons.wikimedia.org/wiki/File:Juggling_on_the_Berlin_Wall_1a.jpg
+• Russland-Nord 1941: Bundesarchiv, Bild 101I-009-0869-20 / Schröter, CC BY-SA 3.0 DE, https://commons.wikimedia.org/wiki/File:Bundesarchiv_Bild_101I-009-0869-20,_Russland-Nord,_Vormarsch_durch_Lettland.jpg
+• Bust of Catherine II by Marie-Anne Collot: photo Wolfgang Moroder, CC BY-SA 3.0, https://commons.wikimedia.org/wiki/File:Portrait_of_Catherine_II_Collot_Marie_Anne.jpg
+• Peter the Great: Louis-Pierre Henriquel after Paul Delaroche, National Gallery of Art, CC0
+• The Victory at Poltava (Alexander von Kotzebue, 1862) and Napoleon's Retreat from Moscow (Adolph Northen): public domain
 
 #geopolitics #geography #russia #china #maps #documentary #education
 
