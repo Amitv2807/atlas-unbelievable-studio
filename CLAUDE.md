@@ -6,6 +6,8 @@ Formats: long episodes (~10 min, landscape 1920×1080) and Shorts (36–50 s, 10
 ## Non-negotiables
 1. **Facts must be checked.** Every number in a script gets a row in a fact-check table. No guessing.
 2. **Only reusable media.** NASA (public domain), Natural Earth, Wikimedia Commons PD/CC0/CC BY/CC BY-SA, our own Earshot sounds.
+   **Music = YouTube Audio Library tracks** ("attribution not required") from `music/`, chosen by mood (mysterious, epic, fun, dark);
+   the Earshot pad bed is only a fallback.
    Never use other creators' YouTube clips (Content ID, strikes, YouTube ToS). Log credits; paste them in descriptions.
 3. **No text overlaps.** Run `tools/overlap.js` (episodes) or `tools/soverlap.js` (Shorts) over the whole video before every render: target 0.
 4. **Loudness −14 LUFS**, true peak ≤ −1 dB. Check with `ext/motionmaxxing/scripts/look.py --expect-audio`.
