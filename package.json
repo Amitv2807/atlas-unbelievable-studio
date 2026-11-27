@@ -1,1 +1,1 @@
-{"name":"atlas-unbelievable-studio","private":true,"devDependencies":{"gsap":"^3.14.2","hyperframes":"^0.7.109"}}
+{"name":"atlas-unbelievable-studio","private":true,"devDependencies":{"gsap":"^3.14.2","hyperframes":"^0.7.109","three":"^0.158.0"}}
