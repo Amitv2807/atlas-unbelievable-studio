@@ -4,13 +4,13 @@ import sys, json, subprocess
 vo, bed, plan, K, out, dur = sys.argv[1:7]; X = json.load(open(plan))["SFX"]; K = K.rstrip("/") + "/"
 M = {"whoosh": ("whoosh-flyover.wav", 0.45), "zoom": ("whoosh-short.wav", 0.5), "tick": ("tick-counter.wav", 0.6), "title": ("title-hit.wav", 0.5), "boom": ("impact-reveal.wav", 0.7), "pop": ("pop-marker.wav", 0.8)}
 ins = ["-i", vo, "-i", bed]
-f = ["[0:a]aresample=48000,aformat=channel_layouts=stereo,asplit=2[v][vsc]", "[1:a]aresample=48000,volume=0.22[bed]", "[bed][vsc]sidechaincompress=threshold=0.03:ratio=6:attack=20:release=400[m]"]
+f = ["[0:a]aresample=48000,aformat=channel_layouts=stereo,apad,asplit=2[v][vsc]", "[1:a]aresample=48000,volume=0.22,apad[bed]", f"[bed][vsc]sidechaincompress=threshold=0.03:ratio=6:attack=20:release=400,atrim=0:{dur}[m]"]
 lab = []; k = 2
 for name, times in X.items():
     src, vol = M[name]
     for t in times:
         ins += ["-i", K + src]; ms = int(t * 1000); f.append(f"[{k}:a]aresample=48000,aformat=channel_layouts=stereo,volume={vol},adelay={ms}|{ms}[s{k}]"); lab.append(f"[s{k}]"); k += 1
-f.append("[v][m]" + "".join(lab) + f"amix=inputs={2+len(lab)}:normalize=0:duration=first[mix]")
+f.append("[v][m]" + "".join(lab) + f"amix=inputs={2+len(lab)}:normalize=0:duration=first,atrim=0:{dur}[mix]")
 f.append("[mix]loudnorm=I=-14:TP=-2:LRA=11,alimiter=limit=0.6:level=false:attack=1:release=50,volume=0.3dB[out]")
 subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", ";".join(f), "-map", "[out]", "-t", dur, "-ar", "48000", "-c:a", "pcm_s16le", out], check=True)
 print("mix:", out, "with", k - 2, "sfx")
