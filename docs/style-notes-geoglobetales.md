@@ -1,7 +1,8 @@
 # Lessons from GeoGlobeTales (@GeoGlobeTales, 2.1M subs, Shorts 12–61M views)
 
 Studied: titles/views of the top 48 Shorts, transcripts of 2, and cover + 3 internal frames of the top 12
-(`docs/research/geoglobetales/sheet0.jpg`, `sheet1.jpg`). Take the techniques, build our own look. Never copy their art or characters.
+(`docs/research/geoglobetales/sheet0.jpg`, `sheet1.jpg`).
+**Full 4 fps shot-by-shot study of their Diomede Short: [`frame-study-geoglobetales-diomede.md`](frame-study-geoglobetales-diomede.md).** Take the techniques, build our own look. Never copy their art or characters.
 
 ## Writing
 - One "Why …?" / "How …?" story per Short, 60–105 s (ours: 2 facts in ~40 s). Titles: "Why X …? 🤯 Thing 📍".
