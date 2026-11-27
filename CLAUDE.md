@@ -9,6 +9,8 @@ Formats: long episodes (~10 min, landscape 1920×1080) and Shorts (36–50 s, 10
    **Music = YouTube Audio Library tracks** ("attribution not required") from `music/`, chosen by mood (mysterious, epic, fun, dark);
    the Earshot pad bed is only a fallback.
    Never use other creators' YouTube clips (Content ID, strikes, YouTube ToS). Log credits; paste them in descriptions.
+   **Owner decision (Nov 2026): photos found through Google Images are allowed.** Prefer a free-licensed copy when one is
+   just as good, skip watermarked/agency photos (Getty, AP, Reuters, AFP), and log every image's source URL in the credits.
 3. **No text overlaps.** Run `tools/overlap.js` (episodes) or `tools/soverlap.js` (Shorts) over the whole video before every render: target 0.
 4. **Loudness −14 LUFS**, true peak ≤ −1 dB. Check with `ext/motionmaxxing/scripts/look.py --expect-audio`.
 5. **Calm, readable motion.** Fly-overs ~3 s with easing, one new element at a time, labels never off-frame.
