@@ -56,5 +56,6 @@ for path in sorted(glob.glob(os.path.join(D, "*.mp3")) + glob.glob(os.path.join(
                  "energy": en.tolist(), "brightness_hz": round(cent), "key": f"{key} {mode}", "key_conf": kconf, "percussive": round(perc, 2),
                  "onsets_per_s": round(onset_rate, 2), "dynamics": round(dyn, 2), "sections": sections, "scores": sc, "mood": mood,
                  "mood_source": "filename" if tag in sc else ("listening+analysis" if listen else "analysis"), "listen": listen, "source": "YouTube Audio Library (owner-supplied)", "uses": []}
+    json.dump(lib, open(LIB, "w"), indent=1)
     print(f"{name[:40]:40s} {dur:6.1f}s {tempo:6.1f}bpm {key:>2} {mode:5s} bright {cent:5.0f}Hz perc {perc:.2f} dyn {dyn:.2f} -> {mood:10s} {sc}")
 json.dump(lib, open(LIB, "w"), indent=1); print("library:", LIB, len(lib), "tracks")
