@@ -12,3 +12,4 @@ work/
 .atlas_contact
 *.wav
 !sfx/*.wav
+look/
