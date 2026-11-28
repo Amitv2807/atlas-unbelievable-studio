@@ -50,6 +50,7 @@ html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#02040a
  
  
  
+ 
  <!--media--><img id="m_2013_Vladimir_Putin_and_Xi_Jinping_concl" class="hr" src="assets/media/2013_Vladimir_Putin_and_Xi_Jinping_concl.jpg" alt=""> <img id="m_Kremlin_and_Red_Square1" class="hr" src="assets/media/Kremlin_and_Red_Square1.jpg" alt=""> <img id="m__The_Victory_at_Poltava_by_Alexander_Evs" class="hr" src="assets/media/_The_Victory_at_Poltava_by_Alexander_Evs.jpg" alt=""> <img id="m_Napoleons_retreat_from_Moscow_by_Adolph_" class="hr" src="assets/media/Napoleons_retreat_from_Moscow_by_Adolph_.jpg" alt=""> <img id="m_Bundesarchiv_Bild_101I009086920_Russland" class="hr" src="assets/media/Bundesarchiv_Bild_101I009086920_Russland.jpg" alt=""> <img id="m_Juggling_on_the_Berlin_Wall_1a" class="hr" src="assets/media/Juggling_on_the_Berlin_Wall_1a.jpg" alt=""> <img id="m_LouisPierre_Henriquel_after_Paul_Delaroc" class="hr" src="assets/media/LouisPierre_Henriquel_after_Paul_Delaroc.jpg" alt=""> <img id="m_Portrait_of_Catherine_II_Collot_Marie_An" class="hr" src="assets/media/Portrait_of_Catherine_II_Collot_Marie_An.jpg" alt=""> <img id="m_PIA10613" class="hr" src="assets/media/PIA10613.jpg" alt=""> <img id="m_iss070e091714" class="hr" src="assets/media/iss070e091714.jpg" alt=""> <img id="m_s6306440" class="hr" src="assets/media/s6306440.jpg" alt=""> <img id="m_GSFC_20171208_Archive_e001892" class="hr" src="assets/media/GSFC_20171208_Archive_e001892.jpg" alt=""> <img id="m_s43151238" class="hr" src="assets/media/s43151238.jpg" alt=""> <img id="m_GSFC_20171208_Archive_e000108" class="hr" src="assets/media/GSFC_20171208_Archive_e000108.jpg" alt=""> <img id="m_iss069e060266" class="hr" src="assets/media/iss069e060266.jpg" alt=""> <img id="m_iss072e435710" class="hr" src="assets/media/iss072e435710.jpg" alt=""> <img id="m_iss072e574770" class="hr" src="assets/media/iss072e574770.jpg" alt=""> <img id="m_PIA16290" class="hr" src="assets/media/PIA16290.jpg" alt=""> <img id="m_GSFC_20171208_Archive_e000613" class="hr" src="assets/media/GSFC_20171208_Archive_e000613.jpg" alt=""> <img id="m_PIA02675" class="hr" src="assets/media/PIA02675.jpg" alt=""> <img id="m_iss074e0723716" class="hr" src="assets/media/iss074e0723716.jpg" alt=""> <img id="m_PIA10626" class="hr" src="assets/media/PIA10626.jpg" alt=""> <img id="m_iss029e012564" class="hr" src="assets/media/iss029e012564.jpg" alt=""> <img id="m_sl41404110" class="hr" src="assets/media/sl41404110.jpg" alt=""> <img id="m_iss063e032032" class="hr" src="assets/media/iss063e032032.jpg" alt=""> <img id="m_s6654558" class="hr" src="assets/media/s6654558.jpg" alt=""><!--/media-->
  <div id="logo"><img src="assets/logo.png" alt=""><span>ATLAS UNBELIEVABLE</span></div>
  <div id="fact"><div class="n">CH 1</div><div class="h">HEADLINE</div></div>
@@ -122,11 +123,20 @@ function glow(o,col,w,a){if(a<=0)return;ctx.save();ctx.globalAlpha=a;ctx.shadowC
 function hl(o,col,a,fa){fillF(o,col,(fa??0.42)*a);glow(o,col,3,a);}
 function chainGlow(o,t,a){if(a<=0)return;ctx.save();ctx.globalAlpha=a;ctx.setLineDash([18,12]);ctx.lineDashOffset=-t*30;ctx.shadowColor='#ff2020';ctx.shadowBlur=26;ctx.strokeStyle='#ffd0d0';ctx.lineWidth=4;ctx.beginPath();path(o);ctx.stroke();ctx.restore();}
 function partial(c,p){if(p<=0)return null;if(p>=1)return c;const n=c.length-1,f=p*n,i=Math.floor(f),r=f-i,o=c.slice(0,i+1);if(i<n){const a=c[i],b=c[i+1];o.push([a[0]+(b[0]-a[0])*r,a[1]+(b[1]-a[1])*r]);}return o;}
-function gline(coords,p,col,w,a,dash){const c=partial(coords,p);if(!c||a<=0)return;if(a>0.5&&!NOLINE){const pts=[];for(const q of dens(c,4))if(vis(q)){const e=proj(q);if(e)pts.push(e);}if(pts.length>1)window.__lines.push(pts);}ctx.save();if(dash)ctx.setLineDash(dash);glow({type:'LineString',coordinates:c},col,w,a);ctx.restore();}
-function arrow(coords,p,col,w,a,dash){const c=partial(dens(coords,8),p);if(!c||c.length<2||a<=0)return;gline(c,1,col,w,a,dash);
- const e=proj(c[c.length-1]),q=proj(c[Math.max(0,c.length-3)]);if(!e||!q||!vis(c[c.length-1]))return;const ang=Math.atan2(e[1]-q[1],e[0]-q[0]),s=w*3.6;
- ctx.save();ctx.globalAlpha=a;ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=16;ctx.beginPath();ctx.moveTo(e[0]+Math.cos(ang)*s,e[1]+Math.sin(ang)*s);
- ctx.lineTo(e[0]+Math.cos(ang+2.5)*s,e[1]+Math.sin(ang+2.5)*s);ctx.lineTo(e[0]+Math.cos(ang-2.5)*s,e[1]+Math.sin(ang-2.5)*s);ctx.closePath();ctx.fill();ctx.restore();}
+// lines: dark casing + coloured glow + white core, a comet head while drawing, marching dashes, light pulses along finished arrows
+let NOW=0;const backOut=x=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2);};
+function comet(x,y,w,col,a){if(a<=0)return;ctx.save();ctx.globalAlpha=a;const r=w*3+10,g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.3,col);g.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.restore();}
+function gline(coords,p,col,w,a,dash){const c=partial(coords,p);if(!c||a<=0)return;if(a>0.5&&!NOLINE){const pts=[];for(const q of dens(c,4))if(vis(q)){const e=proj(q);if(e)pts.push(e);}if(pts.length>1)window.__lines.push(pts);}
+ const o={type:'LineString',coordinates:c},D=()=>{if(dash){ctx.setLineDash(dash);ctx.lineDashOffset=-NOW*20;}};
+ ctx.save();D();ctx.globalAlpha=a*.55;ctx.strokeStyle='#02040a';ctx.lineWidth=w+6;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();path(o);ctx.stroke();ctx.restore();
+ ctx.save();D();glow(o,col,w,a);ctx.restore();
+ ctx.save();D();ctx.globalAlpha=a*.8;ctx.strokeStyle='#ffffff';ctx.lineWidth=Math.max(1.2,w*.28);ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();path(o);ctx.stroke();ctx.restore();
+ if(p<1&&!NOLINE){const e=c[c.length-1];if(vis(e)){const q=proj(e);if(q)comet(q[0],q[1],w,col,a);}}}
+function flow(cc,col,w,a){const L=cc.length-1;if(L<1||a<=0)return;for(let k=0;k<2;k++){const u=((NOW/2.4)+k/2)%1,f=u*L,i=Math.floor(f),r=f-i;if(i>=L)continue;const ll=[cc[i][0]+(cc[i+1][0]-cc[i][0])*r,cc[i][1]+(cc[i+1][1]-cc[i][1])*r];if(!vis(ll))continue;const p=proj(ll);if(p)comet(p[0],p[1],w*.6,col,a*Math.sin(Math.PI*u));}}
+function arrow(coords,p,col,w,a,dash){const cc=dens(coords,8),c=partial(cc,p);if(!c||c.length<2||a<=0)return;gline(c,1,col,w,a,dash);if(p>=1)flow(cc,col,w,a);
+ const e=proj(c[c.length-1]),q=proj(c[Math.max(0,c.length-3)]);if(!e||!q||!vis(c[c.length-1]))return;const ang=Math.atan2(e[1]-q[1],e[0]-q[0]),s=w*3.8,P=(an,k)=>[e[0]+Math.cos(an)*s*k,e[1]+Math.sin(an)*s*k];
+ ctx.save();ctx.globalAlpha=a;ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=18;ctx.beginPath();ctx.moveTo(...P(ang,1));ctx.lineTo(...P(ang+2.5,1));ctx.lineTo(...P(ang+Math.PI,.35));ctx.lineTo(...P(ang-2.5,1));ctx.closePath();ctx.fill();
+ ctx.shadowBlur=0;ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.lineJoin='round';ctx.stroke();ctx.restore();}
 function riverDraw(fs,p,col,w,a){if(a<=0||p<=0)return;NOLINE=true;for(const f of fs)for(const l of f.geometry.coordinates)gline(l,p,col,w,a);NOLINE=false;}
 function movers(coords,t,col,a,n,spd){if(a<=0)return;const c=dens(coords,10),L=c.length-1;for(let k=0;k<(n||5);k++){const f=(((t*(spd||0.05))+k/(n||5))%1)*L,i=Math.floor(f),r=f-i;if(i>=L)continue;
  const ll=[c[i][0]+(c[i+1][0]-c[i][0])*r,c[i][1]+(c[i+1][1]-c[i][1])*r];if(!vis(ll))continue;const p=proj(ll);if(!p)continue;ctx.save();ctx.globalAlpha=a;ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=14;ctx.beginPath();ctx.arc(p[0],p[1],7,0,7);ctx.fill();ctx.restore();}}
@@ -138,12 +148,13 @@ window.__boxes=[];window.__lines=[];const ZONES=[];window.__SHIFT=()=>SHIFT;let 
 const SHIFT={"SILK ROAD": [0, 80], "EURASIAN STEPPE": [-38, -92], "GREAT WALL": [0, 20], "CHINA'S SOUTH CHINA SEA CLAIM": [0, 160], "HANOI ↔ WASHINGTON": [-28, -28], "US CARRIERS VISIT DA NANG": [-92, -221], "XINJIANG": [0, -80], "HAN SETTLEMENT AFTER 1949": [15, 37], "STRAIT OF MALACCA": [-8, -18], "MALAYSIA": [-50, -46], "BELT AND ROAD": [0, 160], "ASTANA · 2013": [0, -40], "≈ TENS OF BILLIONS OF DOLLARS": [57, 57], "≈ 3,800 KM": [40, 0], "THE OLD SEA LANES": [8, 18], "FIRST ISLAND CHAIN": [92, 38], "BOSPHORUS": [20, 0], "DARDANELLES": [15, 37], "GIBRALTAR (UK)": [-40, 0], "THE GREAT GAME": [-54, -129], "NORTHERN SEA ROUTE": [20, 0], "GIUK GAP": [0, -20], "WATCHED IN THE COLD WAR · AND AGAIN TODAY": [14, 14], "1920 SVALBARD TREATY": [162, -48], "NATO EXERCISE · COLD RESPONSE": [14, 14], "RIO GRANDE & DESERTS": [111, 46], "ATLANTIC": [55, 23], "GATEWAY TO CENTRAL ASIA": [-23, -55], "SUTLEJ": [-23, -55], "≈ 40% SHORTER": [0, -80]};function pill(x,y,txt,o){if(SHIFT[txt]&&!(o&&o.inP)&&!TQ){x+=SHIFT[txt][0];y+=SHIFT[txt][1];}if(TQ){TQ.push(()=>{const k=TQ;TQ=null;pill(x,y,txt,o);TQ=k;});return;}o=o||{};const fs=o.size||34;ctx.save();ctx.globalAlpha=o.a??1;ctx.font=`${fs}px Archivo`;const tw=ctx.measureText(txt).width,pw=tw+fs*1.1,ph=fs*1.7;
  let x0=x-pw/2;if(o.align==='l')x0=x;if(o.align==='r')x0=x-pw;let y0=y-ph/2;if(!o.inP){x0=clamp(x0,14,W-14-pw);y0=clamp(y0,14,H-14-ph);for(const z of ZONES){if(x0<z.x+z.w&&x0+pw>z.x&&y0<z.y+z.h&&y0+ph>z.y)y0=z.y+z.h+10;}}
  if((o.a??1)>0.5)window.__boxes.push({k:'pill',t:txt,x:x0,y:y0,w:pw,h:ph,inP:!!o.inP});
+ if((o.a??1)<1){const s=.84+.16*backOut(o.a??1);ctx.translate(x0+pw/2,y0+ph/2);ctx.scale(s,s);ctx.translate(-(x0+pw/2),-(y0+ph/2));}
  ctx.fillStyle=o.bg||'rgba(4,8,24,.86)';ctx.strokeStyle=o.bd||'#ffd23f';ctx.lineWidth=3;ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=18;
  ctx.beginPath();ctx.roundRect(x0,y0,pw,ph,ph/2);ctx.fill();ctx.shadowBlur=0;ctx.stroke();ctx.fillStyle=o.fg||'#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(txt,x0+pw/2,y0+ph/2+fs*0.06);ctx.restore();}
 function lab(ll,txt,dx,dy,a,o){if(a<=0||!vis(ll))return;const p=proj(ll);if(!p)return;pill(p[0]+(dx||0),p[1]+(dy||0),txt,Object.assign({a},o||{}));}
 const RED={bd:'#ff7a7a'},BLU={bd:'#7ab4ff'},CYA={bd:'#7fd8ff'},WHT={bd:'#ffffff'},YEL={bg:'#ffd23f',fg:'#111',bd:'#fff'};
 function ytag(ll,txt,dx,dy,a){lab(ll,txt,dx,dy,a,{bg:'#ffd23f',fg:'#111',bd:'#111',size:32});}
-function bigText(x,y,txt,size,a,col){if(a<=0)return;if(SHIFT[txt]&&!TQ){x+=SHIFT[txt][0];y+=SHIFT[txt][1];}if(TQ){TQ.push(()=>{const k=TQ;TQ=null;bigText(x,y,txt,size,a,col);TQ=k;});return;}ctx.save();ctx.globalAlpha=a;ctx.font=`${size}px Anton`;if(a>0.5){const tw=ctx.measureText(txt).width;window.__boxes.push({k:'big',t:txt,x:x-tw/2,y:y-size*0.6,w:tw,h:size*1.2});}ctx.textAlign='center';ctx.textBaseline='middle';
+function bigText(x,y,txt,size,a,col){if(a<=0)return;if(SHIFT[txt]&&!TQ){x+=SHIFT[txt][0];y+=SHIFT[txt][1];}if(TQ){TQ.push(()=>{const k=TQ;TQ=null;bigText(x,y,txt,size,a,col);TQ=k;});return;}ctx.save();ctx.globalAlpha=a;ctx.font=`${size}px Anton`;if(a>0.5){const tw=ctx.measureText(txt).width;window.__boxes.push({k:'big',t:txt,x:x-tw/2,y:y-size*0.6,w:tw,h:size*1.2});}if(a<1){const s=.9+.1*backOut(a);ctx.translate(x,y);ctx.scale(s,s);ctx.translate(-x,-y);}ctx.textAlign='center';ctx.textBaseline='middle';
  ctx.lineJoin='round';ctx.lineWidth=size*0.16;ctx.strokeStyle='#000';ctx.strokeText(txt,x,y);ctx.fillStyle=col||'#ffd23f';ctx.fillText(txt,x,y);ctx.restore();}
 function panel(x,y,w,h,a,title){if(a<=0)return;if(a>0.5)window.__boxes.push({k:'panel',t:title||'panel',x,y,w,h});ctx.save();ctx.globalAlpha=a;ctx.fillStyle='rgba(5,10,28,.92)';ctx.strokeStyle='rgba(255,122,122,.7)';ctx.lineWidth=3;ctx.shadowColor='#000';ctx.shadowBlur=40;
  ctx.beginPath();ctx.roundRect(x,y,w,h,26);ctx.fill();ctx.shadowBlur=0;ctx.stroke();if(title){ctx.font='26px Archivo';ctx.fillStyle='#ff9a9a';ctx.textAlign='left';ctx.fillText(title,x+30,y+46);}ctx.restore();}
@@ -164,7 +175,7 @@ function gauge(x,y,r,frac,label,sub,a,p,col){if(a<=0)return;ctx.save();ctx.globa
 function dim(a,v){if(a<=0)return;flushT();ctx.save();ctx.globalAlpha=a*(v??0.8);ctx.fillStyle='#02040a';ctx.fillRect(0,0,W,H);ctx.restore();}
 function ship(x,y,s,col,a){if(a>0.5)window.__boxes.push({k:'icon',t:'ship',x:x-60*s,y:y-60*s,w:120*s,h:74*s});ctx.save();ctx.globalAlpha=a;ctx.translate(x,y);ctx.scale(s,s);ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(-60,0);ctx.lineTo(60,0);ctx.lineTo(48,14);ctx.lineTo(-52,14);ctx.closePath();ctx.fill();
  ctx.fillRect(-30,-12,40,12);ctx.fillRect(-18,-24,18,12);ctx.fillRect(16,-8,22,8);ctx.fillRect(-4,-36,4,12);ctx.restore();}
-function tank(x,y,s,col,a){if(a>0.5)window.__boxes.push({k:'icon',t:'tank',x:x-40*s,y:y-30*s,w:94*s,h:44*s});ctx.save();ctx.globalAlpha=a;ctx.translate(x,y);ctx.scale(s,s);ctx.fillStyle=col;ctx.beginPath();ctx.roundRect(-40,-6,80,20,10);ctx.fill();ctx.fillRect(-30,-20,52,16);ctx.fillRect(-12,-30,28,12);ctx.fillRect(14,-27,40,5);ctx.restore();}
+function tank(x,y,s,col,a,flip){if(a>0.5)window.__boxes.push({k:'icon',t:'tank',x:x-(flip?54:40)*s,y:y-30*s,w:94*s,h:44*s});ctx.save();ctx.globalAlpha=a;ctx.translate(x,y);ctx.scale(flip?-s:s,s);ctx.fillStyle=col;ctx.beginPath();ctx.roundRect(-40,-6,80,20,10);ctx.fill();ctx.fillRect(-30,-20,52,16);ctx.fillRect(-12,-30,28,12);ctx.fillRect(14,-27,40,5);ctx.restore();}
 function soldier(x,y,s,col,a){if(a>0.5)window.__boxes.push({k:'icon',t:'soldier',x:x-s*.5,y:y-s*1.7,w:s,h:s*1.8});ctx.save();ctx.globalAlpha=a;ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y-s*1.25,s*.42,0,7);ctx.fill();ctx.beginPath();ctx.roundRect(x-s*.5,y-s*.8,s,s*1.3,s*.3);ctx.fill();ctx.restore();}
 function sailShip(x,y,s,a,flip){if(a>0.5)window.__boxes.push({k:'icon',t:'sailship',x:x-95*s,y:y-200*s,w:190*s,h:226*s});ctx.save();ctx.globalAlpha=a;ctx.translate(x,y);ctx.scale(flip?-s:s,s);ctx.fillStyle='#1b1410';ctx.beginPath();ctx.moveTo(-90,0);ctx.lineTo(95,0);ctx.lineTo(78,26);ctx.lineTo(-74,26);ctx.closePath();ctx.fill();
  ctx.fillStyle='#2a1e16';for(let i=0;i<5;i++)ctx.fillRect(-60+i*28,6,10,8);ctx.strokeStyle='#1b1410';ctx.lineWidth=4;[-45,5,55].forEach(m=>{ctx.beginPath();ctx.moveTo(m,0);ctx.lineTo(m,-150);ctx.stroke();});
@@ -202,6 +213,23 @@ const GIUK1=[[-28,68.3],[-22.6,65.6]],GIUK2=[[-13.6,65.1],[-7,62],[-1.3,60.4]];
 const RIO=[[-106.5,31.8],[-104.5,29.6],[-103,29],[-101.4,29.8],[-99.5,27.5],[-97.2,25.95]];
 function icecap(r){const c=[];for(let l=-180;l<=180;l+=3)c.push([l,90-r*(1+.16*Math.sin(3*l*D2R)+.09*Math.sin(7*l*D2R+1)+.05*Math.sin(13*l*D2R+2))]);return poly(c);}const ARCTIC=icecap(22);
 const SEGS=P.SEG,CH=P.CH;
+const WB=[[28.2,69.6],[30,62],[27.8,57.5],[31.7,52.1],[38.2,50.1],[39.7,47.5],[38.4,46.4]];
+// Russia's land border with its NATO neighbours, taken from the shared vertices of the Natural Earth outlines (north to south)
+function rings(f){return (f.geometry.type==='Polygon'?[f.geometry.coordinates]:f.geometry.coordinates).flat();}
+function shared(a3,b3){const key=p=>p[0]+','+p[1],S=new Set();for(const f of W50[b3]||[])for(const r of rings(f))for(const p of r)S.add(key(p));const runs=[];
+ for(const f of W50[a3]||[])for(const ring of rings(f)){const n=ring.length-1;let st=0;while(st<n&&S.has(key(ring[st])))st++;if(st>=n)continue;let cur=[];
+  for(let i=1;i<=n;i++){const p=ring[(st+i)%n];if(S.has(key(p)))cur.push(p);else{if(cur.length>1)runs.push(cur);cur=[];}}if(cur.length>1)runs.push(cur);}
+ return runs.map(r=>r[0][1]<r[r.length-1][1]?r.slice().reverse():r);}
+const NATOB=['NOR','FIN','EST','LVA','LTU','POL'].flatMap(c=>shared(c,'RUS')).map(r=>({r,L:d3.geoLength({type:'LineString',coordinates:r})})),NATOL=NATOB.reduce((s,x)=>s+x.L,0);
+function runsDraw(R,p,col,w,a){let cum=0;for(const x of R){const lp=clamp((p*NATOL-cum)/x.L,0,1);if(lp>0)gline(x.r,lp,col,w,a);cum+=x.L;}}
+const fmtN=n=>Math.round(n).toLocaleString('en-US');
+function padlock(ll,t,ta,tc,a){if(t<ta||a<=0||!vis(ll))return;const p=proj(ll);if(!p)return;const k=ramp(t,ta,ta+.5),cl=sine(ramp(t,tc,tc+.25)),s=.6+.4*backOut(k);
+ if(a*k>.5)window.__boxes.push({k:'icon',t:'lock',x:p[0]-46,y:p[1]-86,w:92,h:130});
+ ctx.save();ctx.globalAlpha=a*k;ctx.translate(p[0],p[1]);ctx.scale(s,s);ctx.shadowColor='rgba(0,0,0,.7)';ctx.shadowBlur=20;
+ const lift=(1-cl)*24;ctx.strokeStyle='#e9edf5';ctx.lineWidth=13;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(-25,-6);ctx.lineTo(-25,-40-lift);ctx.arc(0,-40-lift,25,Math.PI,0);ctx.lineTo(25,-6-lift*1.4);ctx.stroke();
+ const g=ctx.createLinearGradient(0,-16,0,44);g.addColorStop(0,'#ffe27a');g.addColorStop(1,'#c98f12');ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(-44,-16,88,64,12);ctx.fill();ctx.shadowBlur=0;
+ ctx.fillStyle='#3a2a08';ctx.beginPath();ctx.arc(0,8,8,0,7);ctx.fill();ctx.fillRect(-3.5,8,7,20);ctx.restore();
+ if(t>tc&&t<tc+.6){const u=(t-tc)/.6;ctx.save();ctx.globalAlpha=a*(1-u);ctx.strokeStyle='#ffd23f';ctx.lineWidth=5;ctx.beginPath();ctx.arc(p[0],p[1]+10,40+70*u,0,7);ctx.stroke();ctx.restore();}}
 // ---------- render ----------
 
 // ===== archive photos / clips: full-screen Ken Burns or framed card over a blurred copy, caption lower-left, credit lower-right =====
@@ -230,7 +258,7 @@ function mediaLayer(t){if(!window.MEDIA)return;for(const m of MEDIA){if(t<m.t0-.
  if(m.cr){ctx.globalAlpha=a*.75;ctx.font='18px Archivo';ctx.fillStyle='#d8dde8';ctx.textAlign='right';ctx.fillText(m.cr,W-36,H-26);ctx.textAlign='left';}
  ctx.restore();}}
 function render(t){
- window.__boxes=[];window.__lines=[];ZONES.length=0;
+ NOW=t;window.__boxes=[];window.__lines=[];ZONES.length=0;
  const fcE=document.getElementById('fact');let si=-1;for(let i=0;i<SEGS.length;i++)if(t>=SEGS[i][0])si=i;
  let ci=-1;for(let i=0;i<CH.length;i++)if(t>=CH[i][0])ci=i;
  const chA=ci>=0?win(t,CH[ci][0],CH[ci][0]+3.4,.5,.5):0,tiA=win(t,31.0,36.3,.6,.5);
@@ -247,7 +275,7 @@ function render(t){
  if(satA<1){fillF(L50,'#3f7a4f',1);fillF(R10OUT,'#3f7a4f',1);}
  drawSat(c,satA);
  ctx.save();ctx.globalAlpha=.4*clamp(1.4-c.R/9000,.25,1);ctx.strokeStyle='#fff';ctx.lineWidth=1.4;ctx.beginPath();path(c.R>20000?R10OUT:c.R>2500?L50:B110);ctx.stroke();ctx.restore();
- TQ=[];scenes(t,c);mediaLayer(t);flushT();TQ=null;
+ TQ=[];scenes(t,c);fsLayer(t);mediaLayer(t);flushT();TQ=null;
  // ===== HTML overlays =====
  if(si>=0&&fcE.dataset.i!=si){fcE.dataset.i=si;fcE.querySelector('.n').textContent='CH '+(ci+1);fcE.querySelector('.h').textContent=SEGS[si][1];}
  fcE.style.opacity=fe;fcE.style.transform=`translateX(${(1-sine(ramp(t,si>=0?SEGS[si][0]+.3:0,si>=0?SEGS[si][0]+.9:1)))*-40}px)`;
@@ -259,12 +287,11 @@ function render(t){
 function scenes(t,c){
  const at=(k,o)=>B[k]+(o||0);
  // ================= COLD OPEN =================
- {const a=win(t,at('c_line',1.5),at('c_map'),1.2,.8);if(a>0){const L=[[30,62],[50,58],[70,52],[90,48],[110,44],[130,40]];gline(dens(L,8),ramp(t,at('c_line',1.8),at('c_line',5.5)),'#ffffff',4,a,[16,12]);
-  lab([80,30],'THE LINE THAT MATTERS?',0,0,a*ramp(t,at('c_border'),at('c_border',.6)),WHT);}}
  {const a=win(t,at('c_map'),at('ch1',.2),.8,.8);if(a>0){hl(A('RUS'),'#ff4040',a,.4);hl(A('CHN'),'#ff4040',a*ramp(t,at('c_map',.6),at('c_map',1.4)),.4);
   marker(MOS,at('c_xi'),t,'#ffd23f',a);marker(BEI,at('c_xi',.5),t,'#ffd23f',a);lab(MOS,'MOSCOW',0,-62,a*ramp(t,at('c_xi',.2),at('c_xi',.8)));lab(BEI,'BEIJING',0,62,a*ramp(t,at('c_xi',.7),at('c_xi',1.3)));
   const arc=d3.geoInterpolate(MOS,BEI),pts=[];for(let i=0;i<=40;i++)pts.push(arc(i/40));gline(pts,ramp(t,at('c_xi',1),at('c_xi',3)),'#ffd23f',5,a*(1-ramp(t,at('c_locked'),at('c_locked',.6))));
-  bigText(CX,930,'40+ MEETINGS',96,a*win(t,at('c_40'),at('c_deeper'),.5,.5));chainGlow(A('RUS','CHN'),t,a*ramp(t,at('c_share'),at('c_share',1)));}}
+  bigText(CX,930,'40+ MEETINGS',96,a*win(t,at('c_40'),at('c_deeper'),.5,.5));chainGlow(A('RUS','CHN'),t,a*ramp(t,at('c_share'),at('c_share',1)));
+  padlock([100,66],t,at('c_share',.4),at('c_share',2.8),a);padlock([84,35],t,at('c_share',.7),at('c_share',3.2),a);}}
  // ================= CH1 RUSSIA =================
  {const a=win(t,at('n14'),at('west',.4),.5,.6);if(a>0){hl(A('RUS'),'#ff4040',a,.35);hl(A('CHN'),'#ff4040',a,.35);
   let nr=0,nc=0;RUSN.forEach((n,i)=>{const k=ramp(t,at('n14',i*.28),at('n14',i*.28+.3));if(k>0){nr++;hl(A(n),'#ffd23f',a*k*(1-.5*ramp(t,at('watched'),at('watched',1))),.3);}});
@@ -274,9 +301,11 @@ function scenes(t,c){
   const m=win(t,at('money'),at('west',.4),.5,.5);if(m>0){for(let i=0;i<18;i++){const x=150+i*56,y=960;soldier(x,y,30,'#ffd23f',m*ramp(t,at('money',i*.08),at('money',i*.08+.3)));}}}}
  {const a=win(t,at('west',2.5),at('east',.5),.6,.6);if(a>0){hl(A('RUS'),'#ff4040',a,.3);
   [['nor','NOR',[10,62],'NORWAY'],['fin','FIN',[26,64],'FINLAND'],['est','EST',[25.5,58.8],'ESTONIA'],['lva','LVA',[25.5,56.9],'LATVIA'],['ltu','LTU',[23.9,55.3],'LITHUANIA'],['pol','POL',[19.4,52.1],'POLAND']].forEach(([k,c3,ll,n],i)=>{
-   const kk=ramp(t,at(k),at(k,.4));hl(A(c3),'#3d8bff',a*kk,.5);lab(ll,n,[-120,0,-150,-160,-170,-60][i],[0,0,-30,-6,30,40][i],a*kk,{...BLU,size:26});});
+   const kk=ramp(t,at(k),at(k,.4));hl(A(c3),'#3d8bff',a*kk,.5);lab(ll,n,[-120,-37,-150,-160,-170,-60][i],[0,15,-30,-6,30,40][i],a*kk,{...BLU,size:26});});
   const f=win(t,at('fin23'),at('altog'),.5,.5);if(f>0){glow(A('FIN'),'#ffffff',5,f);ytag([33,68],'+1,340 KM BORDER · 2023',300,-40,f);}
-  bigText(CX,960,'≈ 2,500 KM FACING NATO',84,a*ramp(t,at('k2500'),at('k2500',.5)));}}
+  const tp=ramp(t,at('altog',.4),at('k2500',.8));if(tp>0){runsDraw(NATOB,tp,'#ffd23f',6,a);const pa=a*ramp(t,at('altog',.2),at('altog',.7));panel(1380,600,480,176,pa,'LAND BORDER WITH NATO');
+   ptext(1410,730,(tp<1?'':'≈ ')+fmtN(Math.round(2500*sine(tp)/10)*10)+' KM','76px Anton','#ffd23f',pa);}
+  bigText(CX,960,'FROM THE ARCTIC TO THE BALTIC',80,a*ramp(t,at('k2500',2.9),at('k2500',3.4)));}}
  {const a=win(t,at('east',2.5),at('catch',.6),.6,.5);if(a>0){hl(A('RUS'),'#ff4040',a,.3);hl(A('CHN'),'#ff9a3d',a,.3);lab([125,50],'BORDER SETTLED · 2008',0,-40,a*ramp(t,at('y2008'),at('y2008',.5)),YEL);
   lab([97,62],'RUSSIA',0,0,a,RED);lab([105,40],'CHINA',0,0,a,{bd:'#ffb36b'});}}
  {const a=win(t,at('catch',2.5),at('nervous',.4),.6,.6);if(a>0){hl(A('RUS'),'#ff4040',a,.22);gline(dens(URALS,4),ramp(t,at('quarters'),at('quarters',2)),'#ffd23f',6,a);lab([61,62],'URAL MOUNTAINS',300,0,a*ramp(t,at('urals1'),at('urals1',.5)));
@@ -295,23 +324,27 @@ function scenes(t,c){
  {const a=win(t,at('road',2.5),at('coldwar',.5),.6,.6);if(a>0){marker(MOS,at('road',2.8),t,'#ff4040',a);lab(MOS,'MOSCOW',60,-60,a*ramp(t,at('road',3),at('road',3.5)),RED);
   {const IC=['#ffd23f','#7fd8ff','#ff9a3d','#ff4a4a'],IN=[['plc','1610','POLAND-LITHUANIA'],['sweden','1708','SWEDEN'],['napoleon','1812','NAPOLEON'],['germany','1941','NAZI GERMANY']];
    const la=a*ramp(t,at('plc'),at('plc',.6));panel(60,620,610,96+4*76,la,'INVASIONS FROM THE WEST');
-   IN.forEach(([k,y,n],i)=>{const k0=at(k),p=ramp(t,k0,k0+2.5),r=a*ramp(t,k0,k0+.5),cur=i===3||t<at(IN[Math.min(3,i+1)][0])?1:.55;
+   const rep=t>=at('again');IN.forEach(([k,y,n],i)=>{const k0=at(k),p=rep?ramp(t,at('again',.5+i*.55),at('again',2.1+i*.55)):ramp(t,k0,k0+2.5),r=a*ramp(t,k0,k0+.5),cur=rep||i===3||t<at(IN[Math.min(3,i+1)][0])?1:.55;
     arrow(INV[i],p,IC[i],i===3?7:6,a*cur);if(r>0){const yy=620+96+i*76;ctx.save();ctx.globalAlpha=la*r;ctx.strokeStyle=IC[i];ctx.lineWidth=7;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(96,yy+18);ctx.lineTo(150,yy+18);ctx.stroke();ctx.restore();
      ptext(172,yy+32,y,'44px Anton',IC[i],la*r);ptext(282,yy+30,n,'30px Archivo','#ffffff',la*r);}});}
   bigText(CX,190,'THE DANGER CAME FROM THE WEST',72,a*ramp(t,at('again'),at('again',.5)));}}
  {const a=win(t,at('coldwar',2.5),at('without',.4),.6,.6);if(a>0){const g=ramp(t,at('soviet'),at('soviet',1)),fall=ramp(t,at('y1991',.3),at('fellback',1));
   hl(A(...USSR.filter(x=>x!=='RUS')),'#ff4040',a*g*(1-fall),.45);hl(A('RUS'),'#ff4040',a*g,.45);hl(A(...SAT),'#ff9a3d',a*g*(1-fall),.4);hl(GDR,'#ff9a3d',a*g*(1-fall),.4);
   lab([60,50],'SOVIET UNION',0,0,a*g*(1-fall),RED);lab([19.5,48.8],'SATELLITE STATES',60,110,a*g*(1-fall)*ramp(t,at('soviet',.8),at('soviet',1.3)),{bd:'#ffb36b'});
-  gline(CURTAIN,ramp(t,at('germanymid'),at('germanymid',2)),'#ffffff',5,a*(1-fall),[14,10]);lab([10.5,51.5],'IRON CURTAIN',-170,0,a*(1-fall)*ramp(t,at('germanymid',1),at('germanymid',1.5)),WHT);
+  gline(CURTAIN,ramp(t,at('germanymid'),at('germanymid',2)),'#ffffff',5,a*(1-fall),[14,10]);lab([10.5,51.5],'IRON CURTAIN',-170,-40,a*(1-fall)*ramp(t,at('germanymid',1),at('germanymid',1.5)),WHT);
   const fg=a*win(t,at('gap'),at('y1991',.6),.4,.4);marker([9.68,50.55],at('gap'),t,'#ffd23f',fg);lab([9.68,50.55],'FULDA GAP',-150,40,fg);
+  const tk=a*(1-fall)*(1-ramp(t,at('y1991',-.3),at('y1991',.2)));const TP=dens([[23,52.4],[19,52.1],[15.5,51.6],[12.9,51.15]],12),gT=1.72*sine(ramp(t,at('germanymid',1),at('gap',2.2)));for(let i=0;i<4;i++){const f=clamp(gT-i*.24,0,1)*(TP.length-1),j=Math.min(TP.length-2,Math.floor(f)),r=f-j,ll=[TP[j][0]+(TP[j+1][0]-TP[j][0])*r,TP[j][1]+(TP[j+1][1]-TP[j][1])*r];
+   if(tk>0&&gT-i*.24>0&&vis(ll)){const q=proj(ll);tank(q[0],q[1],.42,'#f4f4f4',tk*clamp((gT-i*.24)*8,0,1),true);}}
   bigText(CX,960,'1991',120,a*win(t,at('y1991'),at('y2005'),.4,.5),'#ff5a5a');
   const q=win(t,at('quote',-.3),at('logic',1.2),.6,.6);if(q>0){dim(q,.82);ctx.save();ctx.globalAlpha=q;ctx.font='92px Anton';ctx.fillStyle='#fff';ctx.textAlign='center';
    const L1='“THE GREATEST GEOPOLITICAL',L2='CATASTROPHE OF THE CENTURY”';ctx.fillText(L1,CX,450);ctx.fillStyle='#ff5a5a';ctx.fillText(L2,CX,570);ctx.restore();
    if(q>.5){window.__boxes.push({k:'big',t:'quote1',x:360,y:370,w:1200,h:100},{k:'big',t:'quote2',x:360,y:490,w:1200,h:100});}ptext(CX,670,'— VLADIMIR PUTIN, 2005','36px Archivo','#c9d4ee',q*ramp(t,at('quote',.8),at('quote',1.3)),'center');}
   const cu=win(t,at('cushion'),at('without',.4),.5,.5);if(cu>0)bigText(CX,960,'THE BUFFER WAS GONE',80,cu);}}
- {const a=win(t,at('without',2.5),at('cheaper',.4),.6,.6);if(a>0){hl(A('RUS'),'#ff4040',a,.3);for(let i=0;i<10;i++)soldier(1440+i*44,720,30,'#ffd23f',a*ramp(t,at('without',3+i*.1),at('without',3.3+i*.1)));
-  stats(1340,760,540,'MILITARY SPENDING',[['3–4% OF GDP','typical, before the Ukraine war','#ffd23f',at('spend34')]],a,t);if(a>.5)window.__boxes.push({k:'panel',t:'soldiers',x:1400,y:660,w:480,h:90});
-  lab([33,50],'NO MOUNTAINS · NO RIVERS',0,0,a*ramp(t,at('without',.5),at('without',1)),WHT);}}
+ {const a=win(t,at('without',2.5),at('cheaper',.4),.6,.6);if(a>0){hl(A('RUS'),'#ff4040',a,.3);const WBd=dens(WB,10),NL=WBd.length-1;
+  for(let i=0;i<12;i++){const f=(i+.5)/12*NL,j=Math.floor(f),r=f-j,t0=at('without',3+i*.22),u=sine(ramp(t,t0,t0+1.1)),ll=[WBd[j][0]+(WBd[j+1][0]-WBd[j][0])*r+2.6*(1-u),WBd[j][1]+(WBd[j+1][1]-WBd[j][1])*r];
+   if(vis(ll)&&t>t0){const q=proj(ll);soldier(q[0],q[1],27,'#ffd23f',a*ramp(t,t0,t0+.4));}}
+  stats(1340,760,540,'MILITARY SPENDING',[['3–4% OF GDP','typical, before the Ukraine war','#ffd23f',at('spend34')]],a,t);
+  lab([33,50],'NO MOUNTAINS · NO RIVERS',46,111,a*ramp(t,at('without',.5),at('without',1)),WHT);}}
  {const a=win(t,at('cheaper',2.5),at('defensive',.4),.6,.6);if(a>0){hl(A('RUS'),'#ff4040',a,.3);
   const fr=a*win(t,at('friendly'),at('moving',.5),.5,.5);gline(dens([[21,59.5],[22,55],[23.5,52],[23.5,49],[22.5,48]],6),ramp(t,at('friendly'),at('friendly',2.5)),'#ffd23f',5,fr,[14,10]);lab([22,57],'THE KREMLIN\'S WISH: BALTIC → CARPATHIANS',40,0,fr*ramp(t,at('baltic'),at('baltic',.5)),{align:'l'});
   hl(A('BLR'),'#ff4040',a*ramp(t,at('belarus'),at('belarus',.5)),.45);lab([28,53.5],'BELARUS',40,0,a*ramp(t,at('belarus'),at('belarus',.5)),RED);
@@ -329,9 +362,7 @@ function scenes(t,c){
   const c2=a*ramp(t,at('cath'),at('cath',.6));hl(A('POL','LTU'),'#ff9a3d',c2*(1-ramp(t,at('inv22'),at('inv22',1))),.45);ytag([21,52],'CATHERINE THE GREAT · PARTITIONS 1772–95',60,70,c2*(1-ramp(t,at('inv22'),at('inv22',1))));
   const u=a*ramp(t,at('inv22',.4),at('inv22',1));hl(A('UKR'),'#ffd23f',u,.3);lab(KYIV,'UKRAINE',-200,20,u,{bd:'#ffd23f'});ytag([38.5,49],'2022',80,0,u);
   [[[30.6,52.3],[30.6,51.3],[30.55,50.7]],[[37.8,50.9],[36.9,50.3],[36.3,50.0]],[[34.2,45.3],[34.9,46.6],[35.4,47.4]]].forEach((r,i)=>arrow(r,ramp(t,at('inv22',1+i*.4),at('inv22',2.4+i*.4)),'#ff5a5a',6,u));}}
- {const a=win(t,at('price',.2),at('ch2',.3),.6,.5);if(a>0){hl(A('UKR'),'#ffd23f',a,.25);hl(A('RUS'),'#ff4040',a,.25);
-  stats(1250,170,630,'THE PRICE (estimates)',[['> 1,000,000','killed & wounded · Western estimates','#ff5a5a',at('million')],['≈ 1/5','of Ukraine occupied','#ffd23f',at('fifth')],
-   ['METRES / DAY','typical speed of Russian gains','#ffffff',at('metres')],['≈ 1/3','of Russia\'s federal budget → military','#ffd23f',at('third')]],a,t);}}
+ {const a=win(t,at('price',.2),at('ch2',.3),.6,.5);if(a>0){hl(A('UKR'),'#ffd23f',a,.25);hl(A('RUS'),'#ff4040',a,.25);}}
  // ================= CH2 CHINA =================
  {const a=win(t,at('richest'),at('north',.4),.6,.6);if(a>0){hl(A('CHN'),'#ff4040',a,.4);gline(dens(SILK,6),ramp(t,at('silk',-1),at('silk',2.5)),'#ffd23f',5,a,[16,10]);lab([76,39.5],'SILK ROAD',0,-50,a*ramp(t,at('silk'),at('silk',.6)));
   const d=a*ramp(t,at('direction'),at('direction',.5));[[[105,58],[106,47]],[[78,22],[86,28]],[[103,12],[104,21]],[[60,45],[74,42]],[[135,28],[124,30]]].forEach((r,i)=>arrow(r,ramp(t,at('direction',i*.3),at('direction',1+i*.3)),'#ffffff',5,d));}}
@@ -348,7 +379,6 @@ function scenes(t,c){
   lab([88,32.5],'TIBETAN PLATEAU · "WATER TOWER OF ASIA"',0,0,a*win(t,at('tower',.3),at('india',2.5),.5,.5),CYA);
   riverDraw(RIV('Yangtze','Chang Jiang'),ramp(t,at('rivers'),at('rivers',4)),'#3da9ff',5,a);riverDraw(RIV('Huang'),ramp(t,at('rivers',.6),at('rivers',4.6)),'#ffd23f',5,a);
   lab([108,28],'YANGTZE',-150,60,a*ramp(t,at('rivers',1.5),at('rivers',2))*(1-ramp(t,at('india',2.5),at('india',3))),CYA);lab([110,37],'YELLOW RIVER',0,-50,a*ramp(t,at('rivers',2),at('rivers',2.5))*(1-ramp(t,at('india',2.5),at('india',3))));
-  stats(1330,560,550,'YANGTZE BASIN',[['≈ 2/3','of China\'s rice','#ffd23f',at('basin',.4)],['≈ 40%','of China\'s economy','#7fd8ff',at('rice',.6)]],a*win(t,at('basin'),at('india',.3),.5,.5),t);
   const i2=a*ramp(t,at('india',2.5),at('india',3.2));hl(A('IND'),'#ff9a3d',i2,.2);riverDraw(RIV('Indus'),ramp(t,at('indus'),at('indus',3)),'#3da9ff',5,i2);riverDraw(RIV('Brahmaputra','Yarlung'),ramp(t,at('brahma'),at('brahma',3)),'#3da9ff',5,i2);riverDraw(RIV('Sutlej'),ramp(t,at('sutlej'),at('sutlej',2)),'#3da9ff',5,i2);
   lab([71,29],'INDUS',0,30,i2*ramp(t,at('indus',.3),at('indus',.8)),CYA);lab([91,26.2],'BRAHMAPUTRA',0,40,i2*ramp(t,at('brahma',.3),at('brahma',.8)),CYA);lab([76,31.3],'SUTLEJ',60,-50,i2*ramp(t,at('sutlej',.3),at('sutlej',.8)),CYA);
   const f=a*ramp(t,at('force'),at('force',.6));for(let i=0;i<12;i++){const ll=[79+i*1.3,32.8-i*.45];if(vis(ll)){const p=proj(ll);soldier(p[0],p[1],20,'#ff5a5a',f*ramp(t,at('force',i*.08),at('force',.3+i*.08)));}}}}
@@ -369,7 +399,6 @@ function scenes(t,c){
   stats(1300,300,580,'"GENOCIDE" DETERMINATIONS',[['UNITED STATES','State Department · 2021','#7ab4ff',at('genocide')],['UK PARLIAMENT','vote · 2021','#7ab4ff',at('genocide',1.2)],
    ['FRENCH ASSEMBLY','resolution · 2022','#7ab4ff',at('genocide',2.4)],['CHINA REJECTS IT','calls it "counter-terrorism"','#ff5a5a',at('rejects')]],a*win(t,at('genocide'),at('frontiers',.4),.5,.5),t);}}
  {const a=win(t,at('frontiers',2.5),at('ch3',.4),.6,.6);if(a>0){hl(A('CHN'),'#ff4040',a,.35);
-  [['fs1',[104,47],'STEPPE'],['fs2',[86,30],'MOUNTAINS'],['fs3',[103,19],'JUNGLE'],['fs4',[80,40],'DESERT']].forEach(([k,ll,n])=>{const kk=ramp(t,at(k),at(k,.4));lab(ll,n,0,0,a*kk,{bd:'#ffd23f',size:36});});
   const s=a*ramp(t,at('sea'),at('sea',.8));for(let i=0;i<5;i++)arrow([[135,18+i*5],[123.5,20+i*4.4]],ramp(t,at('sea',i*.2),at('sea',1.2+i*.2)),'#7fd8ff',5,s);bigText(CX,960,'THE THREAT FROM THE SEA',84,s,'#7fd8ff');}}
  // ================= CH3 MALACCA =================
  {const a=win(t,at('ch3',3.4),at('different',.6),.6,.8);if(a>0){illusOpium(t,a);}}
@@ -504,6 +533,138 @@ function illusOpium(t,a){const T=t-B.ch3;ctx.save();ctx.globalAlpha=a;let g=ctx.
    if(ph<.12){ctx.globalAlpha=a*(1-ph/.12);ctx.fillStyle='#ffd23f';ctx.beginPath();ctx.arc(x+T*14+100*s,y-6*s,16*s,0,7);ctx.fill();}ctx.restore();}});
  bigText(CX,150,'FIRST OPIUM WAR · 1839',96,a*ramp(t,B.opium,B.opium+.6),'#ffffff');pill(CX,250,'Britain\'s Royal Navy breaks China\'s coastal defences',{a:a*ramp(t,B.navy1839,B.navy1839+.5),size:32});
  pill(CX,960,'THE SEA BECAME THE GATEWAY FOR INVASION',{a:a*ramp(t,B.gateway2,B.gateway2+.5),size:36,bd:'#ff7a7a'});}
+// ===== full-screen graphic scenes (kinetic type, illustrations, charts): drawn over the map, under archive photos =====
+const FS=[];
+function fsLayer(t){let first=true;for(const s of FS){if(t<s[0]-.05||t>s[1]+.05)continue;const a=win(t,s[0],s[1],s[3],s[4]);if(a<=0)continue;
+ if(first){flushT();first=false;}const q=TQ;TQ=null;if(a>.5){window.__boxes.length=0;window.__lines.length=0;}
+ ctx.save();const z=1+.03*(1-sine(ramp(t,s[0],s[0]+.9)));ctx.translate(CX,CY);ctx.scale(z,z);ctx.translate(-CX,-CY);s[2](t,a,t-s[0]);ctx.restore();TQ=q;}}
+function fsBg(a,c0,c1){ctx.save();ctx.globalAlpha=a;const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,c0||'#0a1230');g.addColorStop(1,c1||'#02040a');ctx.fillStyle=g;ctx.fillRect(-40,-40,W+80,H+80);
+ ctx.strokeStyle='rgba(140,170,255,.07)';ctx.lineWidth=1;const o=(NOW*8)%64;for(let x=-64+o;x<W+64;x+=64){ctx.beginPath();ctx.moveTo(x,-40);ctx.lineTo(x,H+40);ctx.stroke();}for(let y=-40+o*.5;y<H+40;y+=64){ctx.beginPath();ctx.moveTo(-40,y);ctx.lineTo(W+40,y);ctx.stroke();}
+ const v=ctx.createRadialGradient(CX,CY,H*.3,CX,CY,H*1.05);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.65)');ctx.fillStyle=v;ctx.fillRect(-40,-40,W+80,H+80);ctx.restore();}
+function card(x,y,w,h,a,bd){if(a<=0)return;if(a>.5)window.__boxes.push({k:'panel',t:'card',x,y,w,h});ctx.save();ctx.globalAlpha=a;ctx.fillStyle='rgba(9,15,38,.94)';ctx.strokeStyle=bd||'rgba(255,122,122,.7)';ctx.lineWidth=3;ctx.shadowColor='#000';ctx.shadowBlur=40;
+ ctx.beginPath();ctx.roundRect(x,y,w,h,26);ctx.fill();ctx.shadowBlur=0;ctx.stroke();ctx.restore();}
+function popAt(x,y,k){const s=.86+.14*backOut(clamp(k,0,1));ctx.translate(x,y);ctx.scale(s,s);ctx.translate(-x,-y);}
+function star(x,y,r){ctx.beginPath();for(let i=0;i<10;i++){const an=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.45:r;ctx.lineTo(x+Math.cos(an)*rr,y+Math.sin(an)*rr);}ctx.closePath();ctx.fill();}
+function rider(x,y,s,ph,col,a){if(a<=0)return;ctx.save();ctx.globalAlpha=a;ctx.translate(x,y);ctx.scale(s,s);ctx.fillStyle=col;ctx.strokeStyle=col;ctx.lineCap='round';ctx.lineWidth=7;
+ [[24,0],[34,1.6],[-24,3.1],[-34,4.7]].forEach(([lx,o])=>{const an=Math.sin(ph+o)*.55;ctx.beginPath();ctx.moveTo(lx,8);ctx.lineTo(lx+Math.sin(an)*30,8+Math.cos(an)*30);ctx.stroke();});
+ ctx.beginPath();ctx.ellipse(0,0,44,17,0,0,7);ctx.fill();ctx.beginPath();ctx.moveTo(30,-8);ctx.lineTo(50,-38);ctx.lineTo(62,-34);ctx.lineTo(44,2);ctx.closePath();ctx.fill();
+ ctx.beginPath();ctx.ellipse(62,-32,15,8,.5,0,7);ctx.fill();ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(-42,-4);ctx.quadraticCurveTo(-62,0,-60,22);ctx.stroke();
+ ctx.lineWidth=11;ctx.beginPath();ctx.moveTo(-2,-12);ctx.lineTo(-6,-46);ctx.stroke();ctx.beginPath();ctx.arc(-6,-58,9,0,7);ctx.fill();ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-18,-30);ctx.lineTo(70,-72);ctx.stroke();ctx.restore();}
+function walker(x,y,s,ph,col,a,gun){if(a<=0)return;ctx.save();ctx.globalAlpha=a;ctx.translate(x,y);ctx.scale(s,s);ctx.fillStyle=col;ctx.strokeStyle=col;ctx.lineCap='round';ctx.lineWidth=8;const l=Math.sin(ph)*.45;
+ ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(Math.sin(l)*32,0);ctx.moveTo(0,-30);ctx.lineTo(-Math.sin(l)*32,0);ctx.stroke();ctx.lineWidth=13;ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(2,-62);ctx.stroke();
+ ctx.beginPath();ctx.arc(3,-74,9,0,7);ctx.fill();if(gun){ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-4,-40);ctx.lineTo(14,-98);ctx.stroke();}ctx.restore();}
+function kremlin(x,y,s,col){ctx.save();ctx.translate(x,y);ctx.scale(s,s);ctx.fillStyle=col;ctx.fillRect(-230,-42,460,42);for(let i=-230;i<230;i+=18)ctx.fillRect(i,-54,10,12);
+ ctx.fillRect(-32,-160,64,118);ctx.fillRect(-24,-212,48,52);ctx.beginPath();ctx.moveTo(-26,-212);ctx.lineTo(0,-300);ctx.lineTo(26,-212);ctx.closePath();ctx.fill();
+ [[120,-96,26],[165,-128,32],[205,-84,22],[-140,-86,24],[-185,-108,28]].forEach(([dx,dy,r])=>{ctx.fillRect(dx-r*.6,dy,r*1.2,-dy);ctx.beginPath();ctx.moveTo(dx-r,dy);ctx.quadraticCurveTo(dx-r*1.25,dy-r*1.25,dx,dy-r*2.2);
+  ctx.quadraticCurveTo(dx+r*1.25,dy-r*1.25,dx+r,dy);ctx.closePath();ctx.fill();ctx.fillRect(dx-1.5,dy-r*2.2-14,3,14);});ctx.fillStyle='#c0141f';star(0,-312,11);ctx.restore();}
+function frond(x,y,len,ang,col,a){ctx.save();ctx.globalAlpha=a;ctx.translate(x,y);ctx.rotate(ang);ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=9;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo(len*.5,-len*.22,len,len*.05);ctx.stroke();
+ for(let i=2;i<16;i++){const u=i/16,px=len*u,py=-.44*len*u*(1-u)+.05*len*u*u,L=len*.2*(1-u*.55);for(const sd of [-1,1]){ctx.save();ctx.translate(px,py);ctx.rotate(sd*.95+.25);ctx.beginPath();ctx.ellipse(L*.5,0,L*.5,L*.09,0,0,7);ctx.fill();ctx.restore();}}ctx.restore();}
+function coin(x,y,r,a){if(a<=0)return;ctx.save();ctx.globalAlpha=a;const g=ctx.createLinearGradient(x,y-r,x,y+r);g.addColorStop(0,'#ffe680');g.addColorStop(1,'#c98f12');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();
+ ctx.strokeStyle='#8a5a00';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(x,y,r*.68,0,7);ctx.stroke();ctx.restore();}
+function tileArt(i,x,y,w,h,T){const sky=(c0,c1)=>{const g=ctx.createLinearGradient(0,y,0,y+h);g.addColorStop(0,c0);g.addColorStop(1,c1);ctx.fillStyle=g;ctx.fillRect(x,y,w,h);};
+ const hills=(b,am,f,ph,col)=>{ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x,y+h);for(let xx=0;xx<=w;xx+=6)ctx.lineTo(x+xx,y+b+am*Math.sin(xx*f+ph));ctx.lineTo(x+w,y+h);ctx.closePath();ctx.fill();};
+ if(i===0){sky('#6f9fd6','#efe0ae');hills(250,18,.02,T*.3,'#b9b46a');hills(300,14,.03,1+T*.5,'#7f8a3e');rider(x+w*.5+Math.sin(T*.6)*14,y+292,.62,NOW*9,'#2b2410',1);}
+ else if(i===1){sky('#41689c','#d3e2f2');const pk=(pts,col,snow)=>{ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x,y+h);for(const [u,v] of pts)ctx.lineTo(x+w*u,y+h*v);ctx.lineTo(x+w,y+h);ctx.closePath();ctx.fill();
+   if(snow){ctx.fillStyle='#ffffff';for(let k=1;k<pts.length-1;k++){const [u,v]=pts[k],[u0,v0]=pts[k-1],[u1,v1]=pts[k+1];if(v>v0||v>v1)continue;const f=.3;ctx.beginPath();ctx.moveTo(x+w*u,y+h*v);ctx.lineTo(x+w*(u+(u1-u)*f),y+h*(v+(v1-v)*f));ctx.lineTo(x+w*(u+(u0-u)*f),y+h*(v+(v0-v)*f));ctx.closePath();ctx.fill();}}};
+  pk([[0,.55],[.18,.3],[.32,.5],[.5,.14],[.68,.42],[.82,.26],[1,.5]],'#6a7286',true);pk([[0,.8],[.2,.56],[.4,.74],[.62,.5],[.8,.7],[1,.6]],'#3a4152',false);}
+ else if(i===2){sky('#2f6b44','#0d2a18');for(let k=0;k<3;k++){ctx.fillStyle=['#1f5a35','#174a2a','#0f3a20'][k];for(let xx=-20;xx<w+40;xx+=46){ctx.beginPath();ctx.arc(x+xx+(k*23)%46,y+110+k*90+Math.sin(xx*.13+k)*14,40+k*6,0,7);ctx.fill();}ctx.fillRect(x,y+120+k*90,w,h);}
+  frond(x-10,y+h+10,260,-.7,'#06180c',1);frond(x+w+10,y+h+10,260,-2.45,'#06180c',1);}
+ else{sky('#f09a50','#fbe1ab');ctx.fillStyle='#fff2c0';ctx.beginPath();ctx.arc(x+w*.72,y+h*.3,42,0,7);ctx.fill();hills(250,22,.018,T*.4,'#e2a557');hills(300,16,.027,2+T*.6,'#c27c3a');}}
+// --- cold open: "not democracies vs dictatorships", "not a border crossing" ---
+FS.push([-1,10.95,(t,a)=>{fsBg(a);
+ const la=a*(1-ramp(t,7.2,7.7)),lp=sine(ramp(t,.8,1.9)),dead=ramp(t,6.5,6.9),y0=230,y1=850,ly=y0+(y1-y0)*lp;
+ if(lp>0&&la>0){ctx.save();ctx.globalAlpha=la*(1-.5*dead);ctx.strokeStyle='#ffffff';ctx.lineWidth=7;ctx.lineCap='round';ctx.shadowColor='#9fd0ff';ctx.shadowBlur=26;ctx.beginPath();ctx.moveTo(CX,y0);ctx.lineTo(CX,ly);ctx.stroke();ctx.restore();if(lp<1)comet(CX,ly,7,'#9fd0ff',la);}
+ ptext(CX,160,'THE LINE THAT DIVIDES THE GREAT POWERS?','36px Archivo','#c9d4ee',la*ramp(t,1.9,2.5),'center');
+ const kd=ramp(t,4.9,5.4),kt=ramp(t,5.9,6.4);ctx.save();ctx.translate(-90*(1-sine(kd)),0);bigText(520,560,'DEMOCRACIES',104,la*kd,'#7ab4ff');ctx.restore();
+ ctx.save();ctx.translate(90*(1-sine(kt)),0);bigText(1400,560,'DICTATORSHIPS',104,la*kt,'#ff5a5a');ctx.restore();
+ if(dead>0&&la>0){const s=sine(dead);ctx.save();ctx.globalAlpha=la;ctx.strokeStyle='#ff2d2d';ctx.lineWidth=18;ctx.lineCap='round';ctx.shadowColor='#ff2d2d';ctx.shadowBlur=22;ctx.beginPath();ctx.moveTo(CX-120,390);ctx.lineTo(CX-120+240*s,390+340*s);ctx.stroke();ctx.restore();}
+ const b=a*ramp(t,7.5,8.0);if(b>0){ctx.save();ctx.globalAlpha=b;ctx.fillStyle='#161b2a';ctx.fillRect(-40,770,W+80,150);ctx.strokeStyle='rgba(255,255,255,.45)';ctx.lineWidth=6;ctx.setLineDash([60,44]);ctx.beginPath();ctx.moveTo(-40,845);ctx.lineTo(W+40,845);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#283149';ctx.fillRect(330,580,170,190);ctx.fillStyle='rgba(159,208,255,.45)';ctx.fillRect(352,612,126,74);ctx.fillStyle='#e8232f';ctx.fillRect(320,566,190,18);ctx.fillStyle='#d9dde6';ctx.fillRect(560,610,36,160);
+  const ang=-1.4*(1-backOut(ramp(t,8.1,8.9)));ctx.translate(578,624);ctx.rotate(ang);for(let i=0;i<10;i++){ctx.fillStyle=i%2?'#ffffff':'#e8232f';ctx.fillRect(i*56,-14,56,28);}ctx.restore();
+  pill(CX,330,'BORDER CROSSING',{a:b,size:40,bd:'#ffffff'});
+  const st=ramp(t,9.15,9.45);if(st>0){const s=1+.8*(1-sine(st));ctx.save();ctx.globalAlpha=b*st;ctx.translate(1180,470);ctx.rotate(-.17);ctx.scale(s,s);ctx.strokeStyle='#ff2d2d';ctx.lineWidth=9;ctx.beginPath();ctx.roundRect(-210,-68,420,136,14);ctx.stroke();
+   ctx.font='96px Anton';ctx.fillStyle='#ff2d2d';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('NOT HERE',0,6);ctx.restore();if(b*st>.5)window.__boxes.push({k:'big',t:'NOT HERE',x:960,y:380,w:440,h:180});}}
+},.01,.6]);
+// --- the road into Russia: a flat plain, armies of every era marching east ---
+FS.push([B.road+.05,B.plc+.1,(t,a,T)=>{ctx.save();ctx.globalAlpha=a;let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#1b2234');g.addColorStop(.5,'#5a5f74');g.addColorStop(.66,'#d1a978');g.addColorStop(.66,'#59633a');g.addColorStop(1,'#1d2312');ctx.fillStyle=g;ctx.fillRect(-40,-40,W+80,H+80);
+ ctx.fillStyle='rgba(255,255,255,.07)';for(let i=0;i<6;i++){const cx=((i*380+T*14)%(W+400))-200;ctx.beginPath();ctx.ellipse(cx,210+i%3*70,230,26,0,0,7);ctx.fill();}
+ ctx.fillStyle='#2c3320';for(let x=-20;x<W+20;x+=26){const h2=10+8*Math.abs(Math.sin(x*.37));ctx.beginPath();ctx.ellipse(x,713-h2*.5,16,h2,0,0,7);ctx.fill();}
+ kremlin(1680,713,1,'#141019');ctx.strokeStyle='rgba(255,255,255,.07)';ctx.lineWidth=2;for(let i=-10;i<=10;i++){ctx.beginPath();ctx.moveTo(CX+i*60,713);ctx.lineTo(CX+i*420,H+40);ctx.stroke();}ctx.restore();
+ const sx=T*46;for(let i=0;i<3;i++)rider(150+i*130+sx,800,.9,NOW*9+i*1.3,'#100d0a',a);for(let i=0;i<6;i++)walker(570+i*62+sx,840,.95,NOW*5+i,'#100d0a',a,true);for(let i=0;i<2;i++)tank(1010+i*190+sx,832,1.5,'#100d0a',a);
+ bigText(CX,180,'THE ROAD INTO RUSSIA',96,a*ramp(t,B.road+.5,B.road+1),'#ffffff');pill(1680,350,'MOSCOW',{a:a*ramp(t,B.road+1.2,B.road+1.6),bd:'#ff7a7a',size:30});
+ pill(CX,975,'FLAT · OPEN · NO NATURAL BARRIERS',{a:a*ramp(t,B.road+2,B.road+2.5),size:34,bd:'#ffd23f'});
+},.5,.35]);
+// --- the price of the war: four stat cards ---
+FS.push([B.price+.2,B.ch2-.1,(t,a)=>{fsBg(a,'#160a14','#04030a');
+ [[150,180,B.price+.5,'#ff5a5a'],[990,180,B.fifth-.3,'#ffd23f'],[150,590,B.metres-.3,'#c9d4ee'],[990,590,B.third-.3,'#ff9a3d']].forEach(([x,y,ti,col],i)=>{const k=ramp(t,ti,ti+.5);if(k<=0)return;const A2=a*k;ctx.save();popAt(x+390,y+185,k);card(x,y,780,370,A2,col);
+  if(i===0){ptext(x+36,y+58,'RUSSIAN CASUALTIES · KILLED & WOUNDED','26px Archivo','#ff9a9a',A2);const v=1e6*sine(ramp(t,B.price+1.6,B.million+.3));
+   ptext(x+36,y+196,fmtN(v)+(v>=999999?'+':''),'124px Anton','#ff5a5a',A2);ptext(x+36,y+246,'Western estimates: well past a million','26px Archivo','#c9d4ee',A2);
+   for(let j=0;j<24;j++)soldier(x+52+j*28.5,y+334,16,v/1e6>(j+.5)/24?'#ff5a5a':'#3a3f55',A2);}
+  if(i===1){const p=.2*sine(ramp(t,ti+.4,ti+1.6)),px=x+180,py=y+200;ctx.save();ctx.globalAlpha=A2;ctx.fillStyle='#2a3048';ctx.beginPath();ctx.arc(px,py,118,0,7);ctx.fill();ctx.fillStyle='#ffd23f';ctx.shadowColor='#ffd23f';ctx.shadowBlur=18;
+   ctx.beginPath();ctx.moveTo(px,py);ctx.arc(px,py,118,-Math.PI/2,-Math.PI/2+2*Math.PI*p);ctx.closePath();ctx.fill();ctx.restore();
+   ptext(x+36,y+58,'TERRITORY','26px Archivo','#ffe08a',A2);ptext(x+340,y+216,'≈ 1/5','120px Anton','#ffd23f',A2);ptext(x+340,y+268,'OF UKRAINE OCCUPIED','30px Archivo','#ffffff',A2);}
+  if(i===2){ptext(x+36,y+58,'THE FRONT LINE','26px Archivo','#c9d4ee',A2);ptext(x+36,y+190,'METRES PER DAY','104px Anton','#ffffff',A2);ptext(x+36,y+240,'typical speed of Russian gains since 2022','26px Archivo','#c9d4ee',A2);
+   ctx.save();ctx.globalAlpha=A2;ctx.fillStyle='#2a3048';ctx.fillRect(x+36,y+282,708,30);ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=2;for(let j=0;j<=59;j++){const tx=x+36+j*12;ctx.beginPath();ctx.moveTo(tx,y+282);ctx.lineTo(tx,y+282+(j%5?10:20));ctx.stroke();}
+   const mx=x+40+Math.min(1,(t-ti)/6)*26;ctx.fillStyle='#ff5a5a';ctx.fillRect(x+36,y+282,mx-x-36,30);ctx.beginPath();ctx.moveTo(mx,y+276);ctx.lineTo(mx-10,y+262);ctx.lineTo(mx+10,y+262);ctx.closePath();ctx.fill();ctx.restore();}
+  if(i===3){const p=(1/3)*sine(ramp(t,ti+.4,ti+1.6)),px=x+170,py=y+205;ctx.save();ctx.globalAlpha=A2;ctx.lineWidth=40;ctx.strokeStyle='#2a3048';ctx.beginPath();ctx.arc(px,py,100,0,7);ctx.stroke();ctx.strokeStyle='#ff9a3d';ctx.shadowColor='#ff9a3d';ctx.shadowBlur=18;ctx.lineCap='round';
+   ctx.beginPath();ctx.arc(px,py,100,-Math.PI/2,-Math.PI/2+2*Math.PI*p);ctx.stroke();ctx.restore();
+   ptext(x+36,y+58,'THE BUDGET','26px Archivo','#ffc08a',A2);ptext(x+320,y+216,'≈ 1/3','120px Anton','#ff9a3d',A2);ptext(x+320,y+266,'OF RUSSIA\'S FEDERAL BUDGET','24px Archivo','#ffffff',A2);ptext(x+320,y+304,'→ THE MILITARY','26px Archivo','#ff9a3d',A2);}
+  ctx.restore();});
+},.6,.35]);
+// --- the Great Wall at dusk, horsemen on the steppe ---
+FS.push([B.wall+.05,B.russianorth-.15,(t,a,T)=>{ctx.save();ctx.globalAlpha=a;let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#141a36');g.addColorStop(.38,'#5d3a5e');g.addColorStop(.6,'#e0874f');g.addColorStop(.72,'#f5b36a');g.addColorStop(1,'#f5b36a');ctx.fillStyle=g;ctx.fillRect(-40,-40,W+80,H+80);
+ const sg=ctx.createRadialGradient(1400,600,10,1400,600,260);sg.addColorStop(0,'rgba(255,236,190,1)');sg.addColorStop(.3,'rgba(255,200,130,.55)');sg.addColorStop(1,'rgba(255,170,100,0)');ctx.fillStyle=sg;ctx.fillRect(1100,300,600,600);
+ const ridge=(x,b,a1,f1,a2,f2,ph)=>b+a1*Math.sin(x*f1+ph)+a2*Math.sin(x*f2+ph*1.7)+.35*a2*Math.abs(Math.sin(x*f2*3.1+ph));
+ const layer=(b,a1,f1,a2,f2,ph,col,sh)=>{ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(-40,H+40);for(let x=-40;x<=W+40;x+=8)ctx.lineTo(x,ridge(x+sh,b,a1,f1,a2,f2,ph));ctx.lineTo(W+40,H+40);ctx.closePath();ctx.fill();};
+ layer(560,50,.004,22,.013,1,'#7a4b6a',T*4);layer(650,70,.0032,30,.011,2.3,'#3a2440',T*9);const wy=x=>ridge(x+T*9,650,70,.0032,30,.011,2.3),rv=-40+sine(ramp(t,B.wall+.4,B.wall+2.6))*(W+80);
+ ctx.save();ctx.beginPath();ctx.rect(-40,0,rv+40,H);ctx.clip();ctx.strokeStyle='#b08468';ctx.lineWidth=16;ctx.lineJoin='round';ctx.beginPath();for(let x=-40;x<=W+40;x+=6)ctx.lineTo(x,wy(x)-4);ctx.stroke();
+ ctx.fillStyle='#b08468';for(let x=-40;x<=W+40;x+=16)ctx.fillRect(x,wy(x)-20,8,9);for(let x=90;x<W;x+=300){const y=wy(x);ctx.fillStyle='#9a7058';ctx.fillRect(x-24,y-62,48,62);for(let k=0;k<4;k++)ctx.fillRect(x-24+k*14,y-72,8,10);ctx.fillStyle='#2a1a22';ctx.fillRect(x-6,y-48,12,16);}ctx.restore();
+ g=ctx.createLinearGradient(0,820,0,H);g.addColorStop(0,'#3b3222');g.addColorStop(1,'#15110b');ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(-40,H+40);for(let x=-40;x<=W+40;x+=10)ctx.lineTo(x,840+10*Math.sin(x*.006));ctx.lineTo(W+40,H+40);ctx.closePath();ctx.fill();ctx.restore();
+ if(rv>0&&rv<W)comet(rv,wy(rv)-6,8,'#ffd9a0',a);
+ for(let i=0;i<6;i++){const x=-260+i*150+T*60,y=905+(i%2)*26;for(let d=0;d<3;d++){const ph=((NOW*1.2+i*.3+d*.33)%1);ctx.save();ctx.globalAlpha=a*(1-ph)*.35;ctx.fillStyle='#8a7350';ctx.beginPath();ctx.arc(x-60-ph*90,y+36-ph*20,10+ph*26,0,7);ctx.fill();ctx.restore();}rider(x,y,1,NOW*9+i,'#0d0a08',a);}
+ bigText(CX,180,'THE GREAT WALL',96,a*ramp(t,B.wall+.6,B.wall+1.1),'#ffffff');pill(CX,290,'A HUGELY EXPENSIVE ANSWER TO A GEOGRAPHIC WEAKNESS',{a:a*ramp(t,B.weakness,B.weakness+.5),size:32,bd:'#ffd23f'});
+},.5,.5]);
+// --- the Himalayas in profile: India → the wall → the Tibetan Plateau ---
+const HIM=[[0,150],[.2,220],[.24,600],[.27,1500],[.3,2600],[.32,3500],[.34,5200],[.355,4500],[.37,6400],[.385,5600],[.4,7300],[.415,6500],[.43,8849],[.445,7000],[.46,7600],[.475,6200],[.49,6900],[.51,5600],[.54,5200],[.58,4700],[.63,4900],[.68,4550],[.74,4800],[.8,4500],[.86,4750],[.92,4600],[1,4700]];
+function himAt(u){for(let i=0;i<HIM.length-1;i++)if(u<=HIM[i+1][0]){const f=(u-HIM[i][0])/(HIM[i+1][0]-HIM[i][0]);return HIM[i][1]+(HIM[i+1][1]-HIM[i][1])*f;}return HIM[HIM.length-1][1];}
+FS.push([B.himal-.15,B.neveragreed-.1,(t,a)=>{fsBg(a,'#0a1226','#02040a');const x0=250,x1=1720,yb=870,sc=540/9000,X=u=>x0+(x1-x0)*u,Y=m=>yb-m*sc;
+ bigText(CX,180,'THE STRONGEST NATURAL WALL',84,a*ramp(t,B.himal+.3,B.himal+.8),'#ffffff');
+ ctx.save();ctx.globalAlpha=a;ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1.5;for(let m=2000;m<=8000;m+=2000){ctx.beginPath();ctx.moveTo(x0,Y(m));ctx.lineTo(x1,Y(m));ctx.stroke();}ctx.restore();
+ for(let m=2000;m<=8000;m+=2000)ptext(x0-16,Y(m)+8,fmtN(m)+' M','20px Archivo','#8fa0c0',a,'right');
+ const ue=sine(ramp(t,B.himal+.5,B.himal+3.2)),N=260;
+ if(ue>0){const g=ctx.createLinearGradient(0,Y(9000),0,yb);g.addColorStop(0,'#ffffff');g.addColorStop(.3,'#d9d4c8');g.addColorStop(.55,'#8c7a5c');g.addColorStop(1,'#2f5a34');
+  ctx.save();ctx.globalAlpha=a;ctx.beginPath();ctx.moveTo(X(0),yb);for(let i=0;i<=N;i++){const u=ue*i/N;ctx.lineTo(X(u),Y(himAt(u)));}ctx.lineTo(X(ue),yb);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+  ctx.strokeStyle='#ffffff';ctx.lineWidth=4;ctx.lineJoin='round';ctx.shadowColor='#9fd0ff';ctx.shadowBlur=16;ctx.beginPath();for(let i=0;i<=N;i++){const u=ue*i/N;ctx.lineTo(X(u),Y(himAt(u)));}ctx.stroke();ctx.restore();if(ue<1)comet(X(ue),Y(himAt(ue)),5,'#9fd0ff',a);}
+ ctx.save();ctx.globalAlpha=a;ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x0,yb);ctx.lineTo(x1,yb);ctx.stroke();ctx.restore();
+ ptext(x0,yb+46,'◀ SOUTH','22px Archivo','#8fa0c0',a);ptext(x1,yb+46,'NORTH ▶','22px Archivo','#8fa0c0',a,'right');ptext(CX,yb+46,'height exaggerated','20px Archivo','#6f80a0',a,'center');
+ pill(X(.1),Y(220)-70,'INDIA',{a:a*ramp(t,B.himal+.9,B.himal+1.3),bd:'#ff9a3d',size:34});pill(X(.43),Y(8849)-56,'EVEREST · 8,849 M',{a:a*ramp(t,B.himal+2,B.himal+2.4),bg:'#ffd23f',fg:'#111',bd:'#111',size:30});
+ pill(X(.78),Y(4800)-80,'TIBETAN PLATEAU · AVERAGE > 4,500 M',{a:a*ramp(t,B.himal+2.9,B.himal+3.3),bd:'#7fd8ff',size:30});pill(X(.78),yb-110,'CHINA',{a:a*ramp(t,B.himal+3.1,B.himal+3.5),bd:'#ff7a7a',size:34});
+},.5,.4]);
+// --- the Yangtze basin in two donuts ---
+FS.push([B.basin+.05,B.india-.15,(t,a)=>{fsBg(a,'#06142a','#02040a');bigText(CX,190,'THE YANGTZE BASIN',84,a*ramp(t,B.basin+.2,B.basin+.7),'#7fd8ff');
+ [[620,B.basin+.5,2/3,'#ffd23f','≈ 2/3','OF CHINA\'S RICE'],[1300,B.rice+.8,.4,'#7fd8ff','≈ 40%','OF CHINA\'S ECONOMY']].forEach(([x,ti,fr,col,big,lbl])=>{const k=ramp(t,ti,ti+.5);if(k<=0)return;const p=sine(ramp(t,ti+.2,ti+1.8));
+  ctx.save();popAt(x,560,k);ctx.globalAlpha=a*k;ctx.lineWidth=52;ctx.strokeStyle='rgba(255,255,255,.1)';ctx.beginPath();ctx.arc(x,560,170,0,7);ctx.stroke();ctx.strokeStyle=col;ctx.shadowColor=col;ctx.shadowBlur=22;ctx.lineCap='round';
+  ctx.beginPath();ctx.arc(x,560,170,-Math.PI/2,-Math.PI/2+2*Math.PI*fr*p);ctx.stroke();ctx.restore();ctx.save();popAt(x,560,k);ptext(x,592,big,'96px Anton','#ffffff',a*k,'center');ptext(x,832,lbl,'44px Anton',col,a*k,'center');ctx.restore();});
+},.5,.4]);
+// --- the jungle front ---
+FS.push([B.terrain+.05,B.redriver-.15,(t,a,T)=>{ctx.save();ctx.globalAlpha=a;let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#1d4231');g.addColorStop(.5,'#123222');g.addColorStop(1,'#06140d');ctx.fillStyle=g;ctx.fillRect(-40,-40,W+80,H+80);
+ for(let i=0;i<4;i++){const x=260+i*430+Math.sin(NOW*.3+i)*30,lg=ctx.createLinearGradient(x,0,x+260,H);lg.addColorStop(0,'rgba(220,255,200,.12)');lg.addColorStop(1,'rgba(220,255,200,0)');ctx.fillStyle=lg;ctx.beginPath();ctx.moveTo(x,-40);ctx.lineTo(x+130,-40);ctx.lineTo(x+390,H+40);ctx.lineTo(x+210,H+40);ctx.closePath();ctx.fill();}
+ const can=(base,r,col,sh,seed)=>{ctx.fillStyle=col;for(let x=-120;x<W+160;x+=r*1.1){const xx=((x+sh)%(W+280)+W+280)%(W+280)-140,yy=base+Math.sin(x*.013+seed)*30;ctx.beginPath();ctx.arc(xx,yy,r*(.8+.3*Math.abs(Math.sin(x*.7+seed))),0,7);ctx.fill();}ctx.fillRect(-40,base,W+80,H-base+40);};
+ can(420,70,'#24533a',T*4,1);ctx.fillStyle='#163a26';for(let i=0;i<9;i++){const x=((i*230+T*10)%(W+200))-100;ctx.fillRect(x,300,22+i%3*8,500);}can(590,90,'#1a422b',T*10,2);
+ const mg=ctx.createLinearGradient(0,620,0,800);mg.addColorStop(0,'rgba(200,230,210,0)');mg.addColorStop(.5,'rgba(200,230,210,.2)');mg.addColorStop(1,'rgba(200,230,210,0)');ctx.fillStyle=mg;ctx.fillRect(-40,620,W+80,180);ctx.restore();
+ for(let i=0;i<6;i++)walker(230+i*270+T*18+(i%2)*50,905+(i%3)*16,1.4,NOW*3+i,'#06100a',a,true);
+ ctx.save();ctx.globalAlpha=a;ctx.fillStyle='#0b2015';for(let x=-60;x<W+60;x+=70){ctx.beginPath();ctx.arc(x+((x*7)%30),1010+Math.sin(x*.05)*18,62+Math.abs(Math.sin(x*.3))*30,0,7);ctx.fill();}ctx.restore();
+ [[-30,H+30,760,-.75],[W+30,H+30,760,-2.4],[-30,-30,430,.55],[W+30,-30,430,2.6]].forEach(([x,y,l,an],i)=>frond(x,y,l,an+Math.sin(NOW*.8+i)*.03,'#040d07',a));
+ bigText(CX,180,'HARD TERRAIN FOR ANY ARMY',84,a*ramp(t,B.terrain+.5,B.terrain+1),'#ffffff');
+},.5,.4]);
+// --- four land frontiers, each one costing soldiers and money ---
+FS.push([B.frontiers+.3,B.sea-.3,(t,a,T)=>{fsBg(a);
+ [['STEPPE','NORTH · MONGOLIA','fs1'],['MOUNTAINS','SOUTHWEST · INDIA','fs2'],['JUNGLE','SOUTH · VIETNAM','fs3'],['DESERT','NORTHWEST · XINJIANG','fs4']].forEach(([n,sub,key],i)=>{const ti=B[key]-.15,k=ramp(t,ti,ti+.5);if(k<=0)return;const x=105+i*435,y=200,w=405,h=540,ih=380;
+  ctx.save();popAt(x+w/2,y+h/2,k);card(x,y,w,h,a*k,'#ffd23f');ctx.save();ctx.beginPath();ctx.roundRect(x+12,y+12,w-24,ih,18);ctx.clip();ctx.globalAlpha=a*k;tileArt(i,x+12,y+12,w-24,ih,T);ctx.restore();
+  ptext(x+w/2,y+ih+92,n,'58px Anton','#ffffff',a*k,'center');ptext(x+w/2,y+ih+134,sub,'22px Archivo','#ffd23f',a*k,'center');ctx.restore();
+  const c=ramp(t,B.fs4+.9+i*.25,B.fs4+1.3+i*.25);if(c>0){for(let j=0;j<3;j++)soldier(x+80+j*44,y+h+94,24,'#ff9a9a',a*c);for(let j=0;j<3;j++)coin(x+250+j*44,y+h+72,17,a*c);}});
+ bigText(CX,960,'LESS LEFT FOR THE SEA',80,a*ramp(t,B.sea-4.7,B.sea-4.2),'#7fd8ff');
+},.5,.4]);
 window.__render=render;
 const tl=gsap.timeline({paused:true});const st={t:0};
 tl.to(st,{t:END,duration:END,ease:'none',onUpdate:()=>render(st.t)},0);

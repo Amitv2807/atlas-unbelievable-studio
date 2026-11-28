@@ -404,6 +404,11 @@ SFX = {"whoosh": [round(x + 0.2, 2) for x in fl], "zoom": [round(x + 0.2, 2) for
                                                "y1962", "galwan", "y1979", "danang", "y2009", "andaman", "changi", "miyako", "luzon", "gwadar", "diego", "murmansk",
                                                "bosph", "suez", "bab", "gib", "y1905", "jber", "kitsap", "svalbard")],
        "tick": [round(B["n14"] + i * 0.28, 2) for i in range(14)]}
+# full-screen graphic scenes and map effects added to the first half
+SFX["zoom"] += [round(x, 2) for x in (B["road"] - .2, B["price"], B["wall"] - .2, B["himal"] - .4, B["basin"] - .2, B["terrain"] - .2, B["frontiers"] + .05)]
+SFX["pop"] += [6.55, round(B["c_share"] + 2.8, 2), round(B["c_share"] + 3.2, 2)] + [round(B[k], 2) for k in ("fs1", "fs2", "fs3", "fs4", "fifth", "metres", "third")] + [round(B["basin"] + .5, 2), round(B["rice"] + .8, 2)]
+SFX["boom"] += [9.15]
+SFX["tick"] += [round(B["altog"] + .6 + .45 * i, 2) for i in range(9)]
 P = {"B": B, "K": K, "SEG": SEG, "CH": CH, "END": END, "SFX": SFX}
 out = os.path.join(ROOT, "engine/ep2/assets"); json.dump(P, open(os.path.join(out, "plan.json"), "w"))
 open(os.path.join(out, "plan.js"), "w").write("window.PLAN=" + json.dumps(P) + ";")

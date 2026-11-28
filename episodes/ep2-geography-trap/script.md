@@ -187,6 +187,7 @@ All wording is original; every figure is in the fact-check table at the end. Lin
 | Defence ≈ one third of federal budget | ⚠ | 2025 budget ≈ 32%; source's 2026 figures (44%, 10.5% GDP) unverified |
 | China richest/largest economy into the 19th century | ✓ | Maddison estimates |
 | Ussuri River clashes 1969 | ✓ | |
+| On-screen profile: Everest 8,849 m; Tibetan Plateau average elevation > 4,500 m | ✓ | Everest: 2020 China–Nepal survey; plateau: Britannica ("exceeds 4,500 m"). Profile is schematic, height exaggerated |
 | 1962 war; Galwan 2020 | ✓ | |
 | Yangtze/Yellow rise on the Tibetan Plateau; Indus, Brahmaputra, Sutlej too | ✓ | |
 | Yangtze basin ~2/3 of rice, ~40% of GDP | ⚠ | Commonly cited; confirm source |

@@ -20,7 +20,7 @@ BEATS = [
  ("tank|Ukraine", 342.4, 351.2, "", "THE PRICE OF THE WAR", "Western estimates: well past 1 million casualties, killed and wounded", {}),
  ("x", 389.2, 395.6, "", "MONGOLIA'S OPEN STEPPE", "for 2,000 years, horsemen rode south toward China", {"file": "PIA10613.jpg"}),
  ("Great_Wall|Mutianyu", 395.9, 404.4, "", "THE GREAT WALL", "an expensive answer to a geographic weakness", {}),
- ("iss070e091714", 419.2, 427.6, "", "THE HIMALAYAS", "from the International Space Station", {}),
+ ("iss070e091714", 419.2, 424.0, "", "THE HIMALAYAS", "from the International Space Station", {}),
  ("x", 446.6, 452.9, "1963", "THE TIBETAN PLATEAU", "the water tower of Asia · photographed from Mercury-Atlas 9", {"file": "s63-06440.jpg"}),
  ("x", 571.0, 578.2, "", "XINJIANG", "deserts of the far northwest · Lop Nur from orbit", {"file": "GSFC_20171208_Archive_e001892.jpg"}),
  ("Nemesis", 659.7, 663.0, "1841", "FIRST OPIUM WAR", "the Royal Navy's Nemesis destroys Chinese war junks", {}),
