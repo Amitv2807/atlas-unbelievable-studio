@@ -44,7 +44,8 @@ Reference implementation: `engine/ep1/` (Episode 1) and its files in `episodes/e
 
 ## 6. Render and deliver
 - `npx hyperframes render --workers 4 --quality standard --output renders/epN.mp4` (≈ 48 min for 10:38 on 4 cores; run in background).
-- `tools/encode_upload.sh renders/epN.mp4 mix.wav epN-upload.mp4` (keeps it under the 500 MB send limit).
+- `tools/encode_upload.sh renders/epN.mp4|renders/frames mix.wav epN-upload.mp4`: always 8–10 Mbps (9 Mbps target). Never lower it to fit the chat;
+  deliver the file through Google Drive.
 - `ext/motionmaxxing/scripts/look.py FILE --expect SECONDS --expect-audio`: G0/G2 pass, loudness −14, no silent dropouts.
 - Pull frames from every chapter and look at them before sending.
 - Thumbnail (1280×720): black title bar with a red keyword, red country, yellow stickers, white arrows, yellow rings (`episodes/ep1/thumb/thumb2.html`).

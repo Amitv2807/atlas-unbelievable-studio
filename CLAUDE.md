@@ -15,6 +15,8 @@ Formats: long episodes (~10 min, landscape 1920×1080) and Shorts (36–50 s, 10
 4. **Loudness −14 LUFS**, true peak ≤ −1 dB. Check with `ext/motionmaxxing/scripts/look.py --expect-audio`.
 5. **Calm, readable motion.** Fly-overs ~3 s with easing, one new element at a time, labels never off-frame.
 6. **Sharp maps.** Zoomed scenes use NASA GIBS textures built by `tools/gibs_mosaic.py` (bbox much larger than the view).
+6b. **Encode at 8–10 Mbps** (target 9 Mbps H.264, AAC 192k) for every upload file, episodes and Shorts: `tools/encode_upload.sh`.
+   Owner decision (Nov 2026): 2 Mbps looked blurry. These files are too big to send in chat (~400 MB limit), so deliver them via Google Drive.
 7. Upload settings: Education · Not made for kids · Altered/synthetic content = Yes (AI voice).
 8. Don't upload or publish anything without the owner's explicit go-ahead.
 

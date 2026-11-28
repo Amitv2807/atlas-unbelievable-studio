@@ -23,6 +23,7 @@ Needs a finished episode: its composition (`engine/epN/`), `vo/words.json`, `ass
 - Serve OUT_DIR on port 8766 → `node tools/sstills.js s01,s02 1,10,30,-2 OUT` for contact sheets.
 - `node tools/soverlap.js s01,...,s10` → must print nothing (0 overlaps).
 - Render all: loop `npx hyperframes render --workers 4` per Short (≈ 2–5 min each), then `look.py --expect-audio` on each.
+- Bitrate: every Short must be 8–10 Mbps. Check with `ffprobe -show_entries format=bit_rate`; if lower, re-encode with `tools/encode_upload.sh SHORT.mp4 SHORT.mp4 OUT.mp4` (keeps its own audio).
 
 ## 4. Thumbnails (1080×1920)
 - `node tools/sclean.js '[["s01",12],...]' THUMBS_DIR` captures clean frames (overlays hidden).
