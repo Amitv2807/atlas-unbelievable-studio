@@ -13,7 +13,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#02040a;color:#fff;font-family:Archivo,Arial,sans-serif}
 #root{position:relative;width:1920px;height:1080px;overflow:hidden;background:#02040a}
-#cv{position:absolute;inset:0}
+#cv{position:absolute;left:0;top:0;width:100%;height:100%}
 #tex,.hr{position:absolute;width:1px;height:1px;opacity:0}
 .fontwarm{position:absolute;left:-9999px;top:0}
 #logo{position:absolute;right:42px;top:34px;display:flex;align-items:center;gap:14px;opacity:.85}
@@ -61,7 +61,8 @@ html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#02040a
 <script>
 (function(){
 const W=1920,H=1080,CX=960,CY=540,D2R=Math.PI/180,P=PLAN,B=P.B,END=P.END;window.__DUR=END;
-const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+// DPR: layout stays in 1920x1080 units; the canvas backing store follows devicePixelRatio (capture at 4/3 -> crisp 2560x1440).
+const DPR=window.devicePixelRatio||1,cv=document.getElementById('cv');cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);const ctx=cv.getContext('2d');
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x)),ramp=(t,a,b)=>clamp((t-a)/(b-a),0,1);
 const sine=e=>-(Math.cos(Math.PI*e)-1)/2,cub=e=>e<.5?4*e*e*e:1-Math.pow(-2*e+2,3)/2;
 const win=(t,a,b,fi,fo)=>ramp(t,a,a+(fi??0.6))*(1-ramp(t,b-(fo??0.6),b));
@@ -89,7 +90,7 @@ const normLon=l=>((l+540)%360+360)%360-180;
 function regAt(lon,lat){lon=normLon(lon);for(const r of REG)if(r.data&&lon>=r.b[0]&&lon<=r.b[2]&&lat>=r.b[1]&&lat<=r.b[3])return r;return null;}
 const OFF={};function offFor(sc){if(!OFF[sc]){const c=document.createElement('canvas');c.width=Math.round(W*sc);c.height=Math.round(H*sc);const x=c.getContext('2d');OFF[sc]={c,x,img:x.createImageData(c.width,c.height)};}return OFF[sc];}
 function drawSat(c,alpha){
- if(!TEX||alpha<=0||window.__noSat)return;const hr=c.R>900&&regAt(c.lon,c.lat);const sc=hr?0.75:0.5,o=offFor(sc),OW=o.c.width,OH=o.c.height,d=o.img.data,R=c.R*sc,cx=CX*sc,cy=CY*sc;
+ if(!TEX||alpha<=0||window.__noSat)return;const hr=c.R>900&&regAt(c.lon,c.lat);const sc=(hr?0.75:0.5)*DPR,o=offFor(sc),OW=o.c.width,OH=o.c.height,d=o.img.data,R=c.R*sc,cx=CX*sc,cy=CY*sc;
  const p0=c.lat*D2R,sp=Math.sin(p0),cp=Math.cos(p0),l0=c.lon*D2R;
  for(let y=0;y<OH;y++){const py=(cy-y)/R;for(let x=0;x<OW;x++){const i=(y*OW+x)*4,px=(x-cx)/R,r2=px*px+py*py;
   if(r2>=1){d[i+3]=0;continue}const z=Math.sqrt(1-r2);
@@ -245,7 +246,7 @@ function mediaLayer(t){if(!window.MEDIA)return;for(const m of MEDIA){if(t<m.t0-.
  if(!card){const sc=Math.max(W/iw,H/ih)*(kb[2]+(kb[5]-kb[2])*e),dw=iw*sc,dh=ih*sc;const px=kb[0]+(kb[3]-kb[0])*e,py=kb[1]+(kb[4]-kb[1])*e;
   ctx.drawImage(im,CX-dw/2+px*(dw-W)/2,CY-dh/2+py*(dh-H)/2,dw,dh);}
  else{ctx.drawImage(mblur(m.id,im),-20,-20,W+40,H+40);const mh=760*(1.0+.06*e),mw=mh*iw/ih,cw=Math.min(mw,1500),ch=cw*ih/iw;ctx.translate(CX+(m.cx||0),500);ctx.rotate((m.rot??-1.2)*D2R);
-  ctx.shadowColor='rgba(0,0,0,.7)';ctx.shadowBlur=60;ctx.fillStyle='#f3efe6';ctx.fillRect(-cw/2-16,-ch/2-16,cw+32,ch+32);ctx.shadowBlur=0;ctx.drawImage(im,-cw/2,-ch/2,cw,ch);ctx.setTransform(1,0,0,1,0,0);}
+  ctx.shadowColor='rgba(0,0,0,.7)';ctx.shadowBlur=60;ctx.fillStyle='#f3efe6';ctx.fillRect(-cw/2-16,-ch/2-16,cw+32,ch+32);ctx.shadowBlur=0;ctx.drawImage(im,-cw/2,-ch/2,cw,ch);ctx.setTransform(DPR,0,0,DPR,0,0);}
  const v=ctx.createRadialGradient(CX,CY,H*.45,CX,CY,H*1.05);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.55)');ctx.fillStyle=v;ctx.fillRect(0,0,W,H);
  const g=ctx.createLinearGradient(0,H-330,0,H);g.addColorStop(0,'rgba(2,4,10,0)');g.addColorStop(1,'rgba(2,4,10,.88)');ctx.fillStyle=g;ctx.fillRect(0,H-330,W,330);
  const ca=a*ramp(t,m.t0+.3,m.t0+.9),sl=(1-sine(ramp(t,m.t0+.3,m.t0+.9)))*-60;
@@ -266,7 +267,7 @@ function render(t){
  if(fe>.2)ZONES.push({x:40,y:26,w:(fcE.offsetWidth||900)+30,h:(fcE.offsetHeight||90)+24});ZONES.push({x:1540,y:20,w:380,h:90});
  loadTex();loadRegs();const c=CAM=cam(t);
  proj=d3.geoOrthographic().scale(c.R).translate([CX,CY]).rotate([-c.lon,-c.lat]).clipAngle(90).precision(0.4);path=d3.geoPath(proj,ctx);
- ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#02040a';(flushT(),ctx.fillRect(0,0,W,H));
+ ctx.setTransform(DPR,0,0,DPR,0,0);ctx.fillStyle='#02040a';(flushT(),ctx.fillRect(0,0,W,H));
  if(c.R<1600){const sa=1-ramp(c.R,800,1600);const sh=(c.lon*2)%(W*.6);ctx.fillStyle='#fff';
   for(const s of STARS){const x=((s[0]-sh)%(W*1.6)+W*1.6)%(W*1.6)-W*.3;ctx.globalAlpha=s[3]*sa;ctx.fillRect(x,s[1],s[2],s[2]);}ctx.globalAlpha=1;
   const g=ctx.createRadialGradient(CX,CY,c.R*.95,CX,CY,c.R*1.2);g.addColorStop(0,'rgba(90,170,255,.55)');g.addColorStop(1,'rgba(90,170,255,0)');ctx.fillStyle=g;ctx.globalAlpha=sa;ctx.beginPath();ctx.arc(CX,CY,c.R*1.2,0,7);ctx.fill();ctx.globalAlpha=1;}

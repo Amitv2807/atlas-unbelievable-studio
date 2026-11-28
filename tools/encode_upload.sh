@@ -1,5 +1,5 @@
 #!/bin/bash
-# Final YouTube encode at ~24 Mbps H.264. Owner rule (Nov 2026): always 22-25 Mbps; 2 Mbps blurred the maps and small text.
+# Re-encode an existing render or frames folder at ~24 Mbps H.264 (new renders: tools/render_upload.sh, 1440p). Owner rule (Nov 2026): always 22-25 Mbps; 2 Mbps blurred the maps and small text.
 # encode_upload.sh RENDER.mp4|FRAMES_DIR MIX.wav OUT.mp4 [FPS=30]
 # A frames directory holds frame_%06d.jpg (tools/capture.js output).
 # Output is ~180 MB per minute, too big to send in chat (~400 MB limit): deliver it through Google Drive.

@@ -6,7 +6,7 @@ description: Make an Atlas Unbelievable long-form geography episode (about 10 mi
 # Atlas Unbelievable episode
 
 Run `bash setup/setup.sh` first in a fresh session. Python tools use `.venv/bin/python -I`.
-Reference implementation: `engine/ep1/` (Episode 1) and its files in `episodes/ep1/`.
+Reference implementation: `engine/ep2/` (Episode 2: DPR-aware 1440p canvas, full-screen scene helpers, neon lines) and `episodes/ep2-geography-trap/`.
 
 ## 1. Script (wait for the owner's topic)
 - Current format (owner's choice after competitor research): **one country per episode**, "30 Insane Geography Facts About X", ~10 min.
@@ -23,7 +23,7 @@ Reference implementation: `engine/ep1/` (Episode 1) and its files in `episodes/e
    Fly-overs 3 s; arrive 3 s after a fact starts; slow drift while talking. It also writes the SFX event list.
 
 ## 3. Scenes
-- Copy `engine/ep1/` to `engine/epN/` and replace the per-fact scene blocks in `index.html` (`// ===== Fn ... =====`).
+- Copy `engine/ep2/` to `engine/epN/` (keep its DPR handling: layout in 1920×1080 units, canvas sized by devicePixelRatio) and replace the per-fact scene blocks in `index.html` (`// ===== Fn ... =====`).
   Reusable pieces: `hl()` highlight, `gline()` drawing line, `marker()`, `lab()` geo label, `pill()`, `bigText()`, `panel()`,
   `moon()`, `moveFC()` (true-size country drag), cross-section/gauge/bar panels, territory pings, coastline sweep.
 - Competitor-style look for country episodes: featured country in **red**, saturated teal sea, yellow stickers with arrows and rings.
@@ -43,9 +43,10 @@ Reference implementation: `engine/ep1/` (Episode 1) and its files in `episodes/e
 - `tools/mix_episode.py vo.mp3 bed.wav assets/plan.json sfx/ mix.wav DURATION` → −14 LUFS. Copy to `assets/mix.mp3`.
 
 ## 6. Render and deliver
-- `npx hyperframes render --workers 4 --quality standard --output renders/epN.mp4` (≈ 48 min for 10:38 on 4 cores; run in background).
-- `tools/encode_upload.sh renders/epN.mp4|renders/frames mix.wav epN-upload.mp4`: always 22–25 Mbps (24 Mbps target). Never lower it to fit the chat;
-  deliver the file through Google Drive.
+- From inside `engine/epN` (served on :8765): `tools/render_upload.sh 0 DURATION <mix.wav> <epN-upload.mp4>` → 2560×1440, 24 Mbps,
+  chunked (capture → encode → delete frames), ≈ 2.5 h for 22 min on 4 cores. Run it detached (`setsid nohup … &`); re-running resumes.
+  Never lower the bitrate or resolution to fit the chat: deliver through Google Drive.
+- Previews/stills stay at 1080p for speed (`tools/stills.js`; `SCALE=1.3333` to inspect a 1440p frame).
 - `ext/motionmaxxing/scripts/look.py FILE --expect SECONDS --expect-audio`: G0/G2 pass, loudness −14, no silent dropouts.
 - Pull frames from every chapter and look at them before sending.
 - Thumbnail (1280×720): black title bar with a red keyword, red country, yellow stickers, white arrows, yellow rings (`episodes/ep1/thumb/thumb2.html`).

@@ -22,8 +22,9 @@ Needs a finished episode: its composition (`engine/epN/`), `vo/words.json`, `ass
 ## 3. Check
 - Serve OUT_DIR on port 8766 → `node tools/sstills.js s01,s02 1,10,30,-2 OUT` for contact sheets.
 - `node tools/soverlap.js s01,...,s10` → must print nothing (0 overlaps).
-- Render all: loop `npx hyperframes render --workers 4` per Short (≈ 2–5 min each), then `look.py --expect-audio` on each.
-- Bitrate: every Short must be 22–25 Mbps. Check with `ffprobe -show_entries format=bit_rate`; if lower, re-encode with `tools/encode_upload.sh SHORT.mp4 SHORT.mp4 OUT.mp4` (keeps its own audio).
+- Render each Short: serve its folder on :8765, then `SIZE=1080x1920 tools/render_upload.sh 0 DUR audio.mp3 OUT.mp4 60`
+  → 1440×2560, 24 Mbps (≈ 5–8 min each). The episode engine must be DPR-aware (copied from `engine/ep2`), or the canvas comes out soft.
+  Then `look.py --expect-audio` on each.
 
 ## 4. Thumbnails (1080×1920)
 - `node tools/sclean.js '[["s01",12],...]' THUMBS_DIR` captures clean frames (overlays hidden).
