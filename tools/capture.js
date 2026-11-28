@@ -8,6 +8,6 @@ const name=f=>`${OUT}/frame_${String(f).padStart(6,'0')}.jpg`;
  await Promise.all([...Array(nw).keys()].map(async w=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1920,height:1080}});p.on('pageerror',e=>console.log('pageerror',e.message));
   await p.goto('http://127.0.0.1:8765/index.html');await p.waitForFunction(()=>[...document.images].every(i=>i.complete));await p.evaluate(()=>document.fonts.ready);
   await p.evaluate(()=>window.__render(0));
-  for(let f=f0+w;f<f1;f+=nw){if(fs.existsSync(name(f)))continue;await p.evaluate(t=>window.__render(t),f/fps);await p.screenshot({path:name(f),type:'jpeg',quality:88});
+  for(let f=f0+w;f<f1;f+=nw){if(fs.existsSync(name(f)))continue;await p.evaluate(t=>window.__render(t),f/fps);await p.screenshot({path:name(f),type:'jpeg',quality:95});
    if(++done%600===0){const s=(Date.now()-t0)/1000;console.log(`${done}/${f1-f0} frames, ${(done/s).toFixed(1)} fps`);}}
   await b.close();}));console.log('CAPTURE DONE',f0,f1);})();
